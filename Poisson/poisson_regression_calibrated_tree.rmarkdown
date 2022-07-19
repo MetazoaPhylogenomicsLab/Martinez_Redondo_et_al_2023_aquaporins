@@ -1,0 +1,621 @@
+---
+title: "Poisson regression model of arthropod AQPs"
+author: "Gemma I. Martínez-Redondo"
+date: "03/11/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Set the environment
+```{r}
+# Load packages
+library(phylolm)
+library(phytools)
+library(reshape2)
+library(phangorn)
+library(ggplot2)
+library(cowplot)
+library(dplyr)
+library(data.table)
+library(ggstatsplot)
+library(ggsignif)
+library(treeio)
+```
+
+```{r}
+# Load species tree in newick format
+speciestree <- read.tree("/home/metazomics/AQPs/trees/arthropoda_calibrated_no_onych.nwk")
+```
+
+# Prepare metadata
+
+```{r}
+# Load AQP data and species metadata (TERR VS NO TERRESTRIAL)
+arthropod_data_ter<- read.table("/home/metazomics/AQPs/Poisson_files/aqps_arthropoda_aq_terr.txt",header=TRUE,sep="\t")%>%mutate(Phylum=NULL)
+rownames(arthropod_data_ter)<-arthropod_data_ter$Species
+arthropod_data_ter$Habitat<-as.factor(arthropod_data_ter$Habitat)
+arthropod_data_ter$ALL<-c(arthropod_data_ter$AQP1.like+arthropod_data_ter$AQP3.like+arthropod_data_ter$AQP11.like)
+```
+
+```{r}
+# Load AQP data and species metadata (MARINE VS NO MARINE)
+arthropod_data_mar<- read.table("/home/metazomics/AQPs/Poisson_files/aqps_arthropoda_marine_nomar.txt",header=TRUE,sep="\t")%>%mutate(Phylum=NULL)
+rownames(arthropod_data_mar)<-arthropod_data_mar$Species
+arthropod_data_mar$Habitat<-as.factor(arthropod_data_mar$Habitat)
+arthropod_data_mar$ALL<-c(arthropod_data_mar$AQP1.like+arthropod_data_mar$AQP3.like+arthropod_data_mar$AQP11.like)
+```
+
+```{r}
+#Old metadata (try AQP4 when removing Bib and Eglps)
+metadata<-read.table("/home/metazomics/AQPs/arthropoda/metadata.txt",header=FALSE,sep="\t")
+aqp_count<-read.table("/home/metazomics/AQPs/arthropoda/aqps_count.txt",header=FALSE,sep="\t")
+metadata_subset<-cbind(metadata$V1,metadata$V3)%>%as.data.table()
+arthropod_data<- merge(metadata_subset, aqp_count, by="V1", all=TRUE)
+colnames(arthropod_data)<-c("Species_code","Habitat","GLP","EGLP","AQP12","AQP4","BIB")
+rownames(arthropod_data)<-arthropod_data$Species_code
+terrestrial_data <- arthropod_data%>%mutate(Terr_hab=case_when(Habitat=="Terrestrial"~"Terrestrial",grepl("Semiterrestrial", Habitat, fixed = TRUE)~"Terrestrial",TRUE~"Aquatic", ))
+
+terr_model_results_aqp1 <- phyloglm(AQP4~Terr_hab,
+terrestrial_data, phy=speciestree,
+method = "poisson_GEE")
+head(terr_model_results_aqp1, n=1)
+summary(terr_model_results_aqp1)$coefficients[2,4]
+```
+
+## Aquaporin superfamliy data
+We will load data containing variables in the model (count of each type of aquaporin and habitat classification per taxon) in tsv format. Then, we will compare the amount of copies between terr and Non-terr and Terrestrial and Non-Terrestrial species considering their phylogenetic relationships. To do so, we will fit a Poisson regression model to the count data for each Subtype and the 1000 sampled trees using phyloglm()
+
+Then, we will extract sampling means considering the log-scale relationships between the response (each aquaporin Subtype count) and the explanatory (Habitat) variables in the Poisson regression model. The mathematical function that explains this relationship looks like:
+y = e α+β(x) = e α + e β∗x
+
+## Terrestrial/Aquatic classification
+# Aquaglycerolporins (AQP3.like)
+
+```{r}
+# Fit the model
+terr_model_results_glps <- phyloglm(AQP3.like~Habitat,
+arthropod_data_ter, phy=speciestree,
+method = "poisson_GEE")
+head(terr_model_results_glps, n=1)
+summary(terr_model_results_glps)$coefficients[2,4]
+
+#Estimate phylogenetic means
+terr_glps_phylo_means=c(exp(terr_model_results_glps$coefficients[1]),
+                   exp(terr_model_results_glps$coefficients[1]+terr_model_results_glps$coefficients[2]))
+names(terr_glps_phylo_means)=c("Non-terrestrial", "Terrestrial")
+terr_glps_phylo_means
+
+#Put pvalues and means together
+terr_glps_phylo_means<-c(terr_glps_phylo_means,summary(terr_model_results_glps)$coefficients[2,4])
+names(terr_glps_phylo_means)=c("Non-terrestrial", "Terrestrial","P.val")
+```
+
+# Classical aquaporins (AQP1.like)
+
+```{r}
+# Fit the model
+terr_model_results_aqp1 <- phyloglm(AQP1.like~Habitat,
+arthropod_data_ter, phy=speciestree,
+method = "poisson_GEE")
+head(terr_model_results_aqp1, n=1)
+summary(terr_model_results_aqp1)$coefficients[2,4]
+
+#Estimate phylogenetic means
+terr_aqp1_phylo_means=c(exp(terr_model_results_aqp1$coefficients[1]),
+                   exp(terr_model_results_aqp1$coefficients[1]+terr_model_results_aqp1$coefficients[2]))
+names(terr_aqp1_phylo_means)=c("Non-terrestrial", "Terrestrial")
+terr_aqp1_phylo_means
+
+#Put pvalues and means together
+terr_aqp1_phylo_means<-c(terr_aqp1_phylo_means,summary(terr_model_results_aqp1)$coefficients[2,4])
+names(terr_aqp1_phylo_means)=c("Non-terrestrial", "Terrestrial","P.val")
+```
+
+# Unorthodox aquaporins (AQP11.like)
+
+```{r}
+# Fit the model
+terr_model_results_aqp11 <- phyloglm(AQP11.like~Habitat,
+arthropod_data_ter, phy=speciestree,
+method = "poisson_GEE")
+head(terr_model_results_aqp11, n=1)
+summary(terr_model_results_aqp11)$coefficients[2,4]
+
+#Estimate phylogenetic means
+terr_aqp11_phylo_means=c(exp(terr_model_results_aqp11$coefficients[1]),
+                   exp(terr_model_results_aqp11$coefficients[1]+terr_model_results_aqp11$coefficients[2]))
+names(terr_aqp11_phylo_means)=c("Non-terrestrial", "Terrestrial")
+terr_aqp11_phylo_means
+
+#Put pvalues and means together
+terr_aqp11_phylo_means<-c(terr_aqp11_phylo_means,summary(terr_model_results_aqp11)$coefficients[2,4])
+names(terr_aqp11_phylo_means)=c("Non-terrestrial", "Terrestrial","P.val")
+```
+
+# All AQPs
+
+```{r}
+# Fit the model
+terr_model_results_all <- phyloglm(ALL~Habitat,
+arthropod_data_ter, phy=speciestree,
+method = "poisson_GEE")
+head(terr_model_results_all, n=1)
+summary(terr_model_results_all)$coefficients[2,4]
+
+#Estimate phylogenetic means
+terr_all_phylo_means=c(exp(terr_model_results_all$coefficients[1]),
+                   exp(terr_model_results_all$coefficients[1]+terr_model_results_all$coefficients[2]))
+names(terr_all_phylo_means)=c("Non-terrestrial", "Terrestrial")
+terr_all_phylo_means
+
+#Put pvalues and means together
+terr_all_phylo_means<-c(terr_all_phylo_means,summary(terr_model_results_all)$coefficients[2,4])
+names(terr_all_phylo_means)=c("Non-terrestrial", "Terrestrial","P.val")
+```
+#Put together results and save into file
+```{r}
+terrestrial_data<-rbind(terr_aqp1_phylo_means,terr_glps_phylo_means,terr_aqp11_phylo_means,terr_all_phylo_means)
+rownames(terrestrial_data)<-c("AQP1","AQP3","AQP11","AllAQP")
+write.csv(terrestrial_data,"/home/metazomics/AQPs/Poisson_files/Results_Arthropoda_terrestrial_vs_non.csv")
+```
+
+## Marine/No-marine classification
+# Aquaglycerolporins (AQP3.like)
+
+```{r}
+# Fit the model
+mar_model_results_glps <- phyloglm(AQP3.like~Habitat,
+arthropod_data_mar, phy=speciestree,
+method = "poisson_GEE")
+head(mar_model_results_glps, n=1)
+summary(mar_model_results_glps)$coefficients[2,4]
+
+#Estimate phylogenetic means
+mar_glps_phylo_means=c(exp(mar_model_results_glps$coefficients[1]),
+                   exp(mar_model_results_glps$coefficients[1]+mar_model_results_glps$coefficients[2]))
+names(mar_glps_phylo_means)=c("Marine", "Non-marine")
+mar_glps_phylo_means
+
+#Put pvalues and means together
+mar_glps_phylo_means<-c(mar_glps_phylo_means,summary(mar_model_results_glps)$coefficients[2,4])
+names(mar_glps_phylo_means)=c("Marine", "Non-marine","P.val")
+```
+
+# Classical aquaporins (AQP1.like)
+
+```{r}
+# Fit the model
+mar_model_results_aqp1 <- phyloglm(AQP1.like~Habitat,
+arthropod_data_mar, phy=speciestree,
+method = "poisson_GEE")
+head(mar_model_results_aqp1, n=1)
+summary(mar_model_results_aqp1)$coefficients[2,4]
+
+#Estimate phylogenetic means
+mar_aqp1_phylo_means=c(exp(mar_model_results_aqp1$coefficients[1]),
+                   exp(mar_model_results_aqp1$coefficients[1]+mar_model_results_aqp1$coefficients[2]))
+names(mar_aqp1_phylo_means)=c("Marine", "Non-marine")
+mar_aqp1_phylo_means
+
+#Put pvalues and means together
+mar_aqp1_phylo_means<-c(mar_aqp1_phylo_means,summary(mar_model_results_aqp1)$coefficients[2,4])
+names(mar_aqp1_phylo_means)=c("Marine", "Non-marine","P.val")
+```
+
+# Unorthodox aquaporins (AQP11.like)
+
+```{r}
+# Fit the model
+mar_model_results_aqp11 <- phyloglm(AQP11.like~Habitat,
+arthropod_data_mar, phy=speciestree,
+method = "poisson_GEE")
+head(mar_model_results_aqp11, n=1)
+summary(mar_model_results_aqp11)$coefficients[2,4]
+
+#Estimate phylogenetic means
+mar_aqp11_phylo_means=c(exp(mar_model_results_aqp11$coefficients[1]),
+                   exp(mar_model_results_aqp11$coefficients[1]+mar_model_results_aqp11$coefficients[2]))
+names(mar_aqp11_phylo_means)=c("Marine", "Non-marine")
+mar_aqp11_phylo_means
+
+#Put pvalues and means together
+mar_aqp11_phylo_means<-c(mar_aqp11_phylo_means,summary(mar_model_results_aqp11)$coefficients[2,4])
+names(mar_aqp11_phylo_means)=c("Marine", "Non-marine","P.val")
+```
+
+# All
+
+```{r}
+# Fit the model
+mar_model_results_all <- phyloglm(ALL~Habitat,
+arthropod_data_mar, phy=speciestree,
+method = "poisson_GEE")
+head(mar_model_results_all, n=1)
+summary(mar_model_results_all)$coefficients[2,4]
+
+#Estimate phylogenetic means
+mar_all_phylo_means=c(exp(mar_model_results_all$coefficients[1]),
+                   exp(mar_model_results_all$coefficients[1]+mar_model_results_all$coefficients[2]))
+names(mar_all_phylo_means)=c("Marine", "Non-marine")
+mar_all_phylo_means
+
+#Put pvalues and means together
+mar_all_phylo_means<-c(mar_all_phylo_means,summary(mar_model_results_all)$coefficients[2,4])
+names(mar_all_phylo_means)=c("Marine", "Non-marine","P.val")
+```
+
+#Put together results and save into file
+```{r}
+marine_data<-rbind(mar_aqp1_phylo_means,mar_glps_phylo_means,mar_aqp11_phylo_means,mar_all_phylo_means)
+rownames(marine_data)<-c("AQP1","AQP3","AQP11","AllAQP")
+write.csv(marine_data,"/home/metazomics/AQPs/Poisson_files/Results_Arthropoda_marine_vs_non.csv")
+```
+
+###METAZOA
+```{r metazoa terr_aq}
+metazoa_data<-read.table("/home/metazomics/AQPs/Poisson_files/aqps_all_phyla_no_intertidal.txt",header=TRUE,sep="\t")
+
+sp_tree<-read.tree("/home/metazomics/AQPs/all_phyla_tree.nwk")
+
+metazoa_terr_data <- metazoa_data%>%mutate(Terr_hab=case_when(Habitat=="Terrestrial"~"Terrestrial",grepl("Semiterrestrial", Habitat, fixed = TRUE)~"Terrestrial",TRUE~"Aquatic"))
+metazoa_terr_data$ALL<-c(metazoa_terr_data$AQP1.like+metazoa_terr_data$AQP3.like+metazoa_terr_data$AQP8.like+metazoa_terr_data$AQP11.like)
+rownames(metazoa_terr_data)<-metazoa_terr_data$Species
+
+
+#AQP1
+terr_model_results_aqp1 <- phyloglm(AQP1.like~Terr_hab,
+                                    metazoa_terr_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(terr_model_results_aqp1, n=1)
+summary(terr_model_results_aqp1)$coefficients[2,4]
+
+terr_aqp1_phylo_means=c(exp(terr_model_results_aqp1$coefficients[1]),
+                        exp(terr_model_results_aqp1$coefficients[1]+terr_model_results_aqp1$coefficients[2]))
+names(terr_aqp1_phylo_means)=c("Non-terrestrial", "Terrestrial")
+terr_aqp1_phylo_means
+
+terr_aqp1_phylo_means<-c(terr_aqp1_phylo_means,summary(terr_model_results_aqp1)$coefficients[2,4])
+names(terr_aqp1_phylo_means)=c("Non-terrestrial", "Terrestrial","P.val")
+
+#AQP3
+terr_model_results_aqp3 <- phyloglm(AQP3.like~Terr_hab,
+                                    metazoa_terr_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(terr_model_results_aqp3, n=1)
+summary(terr_model_results_aqp3)$coefficients[2,4]
+
+terr_aqp3_phylo_means=c(exp(terr_model_results_aqp3$coefficients[1]),
+                        exp(terr_model_results_aqp3$coefficients[1]+terr_model_results_aqp3$coefficients[2]))
+names(terr_aqp3_phylo_means)=c("Non-terrestrial", "Terrestrial")
+terr_aqp3_phylo_means
+
+terr_aqp3_phylo_means<-c(terr_aqp3_phylo_means,summary(terr_model_results_aqp3)$coefficients[2,4])
+names(terr_aqp3_phylo_means)=c("Non-terrestrial", "Terrestrial","P.val")
+
+#AQP8
+terr_model_results_aqp8 <- phyloglm(AQP8.like~Terr_hab,
+                                    metazoa_terr_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(terr_model_results_aqp8, n=1)
+summary(terr_model_results_aqp8)$coefficients[2,4]
+
+terr_aqp8_phylo_means=c(exp(terr_model_results_aqp8$coefficients[1]),
+                        exp(terr_model_results_aqp8$coefficients[1]+terr_model_results_aqp8$coefficients[2]))
+names(terr_aqp8_phylo_means)=c("Non-terrestrial", "Terrestrial")
+terr_aqp8_phylo_means
+
+terr_aqp8_phylo_means<-c(terr_aqp8_phylo_means,summary(terr_model_results_aqp8)$coefficients[2,4])
+names(terr_aqp8_phylo_means)=c("Non-terrestrial", "Terrestrial","P.val")
+
+#AQP11
+terr_model_results_aqp11 <- phyloglm(AQP11.like~Terr_hab,
+                                    metazoa_terr_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(terr_model_results_aqp11, n=1)
+summary(terr_model_results_aqp11)$coefficients[2,4]
+
+terr_aqp11_phylo_means=c(exp(terr_model_results_aqp11$coefficients[1]),
+                        exp(terr_model_results_aqp11$coefficients[1]+terr_model_results_aqp11$coefficients[2]))
+names(terr_aqp11_phylo_means)=c("Non-terrestrial", "Terrestrial")
+terr_aqp11_phylo_means
+
+terr_aqp11_phylo_means<-c(terr_aqp11_phylo_means,summary(terr_model_results_aqp11)$coefficients[2,4])
+names(terr_aqp11_phylo_means)=c("Non-terrestrial", "Terrestrial","P.val")
+
+#All AQPs
+terr_model_results_all <- phyloglm(ALL~Terr_hab,
+                                    metazoa_terr_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(terr_model_results_all, n=1)
+summary(terr_model_results_all)$coefficients[2,4]
+
+terr_all_phylo_means=c(exp(terr_model_results_all$coefficients[1]),
+                        exp(terr_model_results_all$coefficients[1]+terr_model_results_all$coefficients[2]))
+names(terr_all_phylo_means)=c("Non-terrestrial", "Terrestrial")
+terr_all_phylo_means
+
+terr_all_phylo_means<-c(terr_all_phylo_means,summary(terr_model_results_all)$coefficients[2,4])
+names(terr_all_phylo_means)=c("Non-terrestrial", "Terrestrial","P.val")
+
+#All data together
+terrestrial_data<-rbind(terr_aqp1_phylo_means,terr_aqp3_phylo_means,terr_aqp8_phylo_means,terr_aqp11_phylo_means,terr_all_phylo_means)
+rownames(terrestrial_data)<-c("AQP1","AQP3","AQP8","AQP11","AllAQP")
+write.csv(terrestrial_data,"/home/metazomics/AQPs/Poisson_files/All_phyla_results_terrestrial_vs_non.csv")
+```
+
+```{r metazoa mar_nomarine}
+metazoa_data<-read.table("/home/metazomics/AQPs/Poisson_files/aqps_all_phyla_no_intertidal.txt",header=TRUE,sep="\t") #Romanchella perrieri and ONFL2 no present in species tree
+
+sp_tree<-read.tree("/home/metazomics/AQPs/all_phyla_tree.nwk")
+
+metazoa_mar_data <- metazoa_data%>%mutate(Mar_hab=case_when(Habitat=="Marine"~"Marine",TRUE~"Non-Marine"))
+metazoa_mar_data$ALL<-c(metazoa_mar_data$AQP1.like+metazoa_mar_data$AQP3.like+metazoa_mar_data$AQP8.like+metazoa_mar_data$AQP11.like)
+rownames(metazoa_mar_data)<-metazoa_mar_data$Species
+
+
+#AQP1
+mar_model_results_aqp1 <- phyloglm(AQP1.like~Mar_hab,
+                                    metazoa_mar_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(mar_model_results_aqp1, n=1)
+summary(mar_model_results_aqp1)$coefficients[2,4]
+
+mar_aqp1_phylo_means=c(exp(mar_model_results_aqp1$coefficients[1]),
+                        exp(mar_model_results_aqp1$coefficients[1]+mar_model_results_aqp1$coefficients[2]))
+names(mar_aqp1_phylo_means)=c("Marine", "Non-Marine")
+mar_aqp1_phylo_means
+
+mar_aqp1_phylo_means<-c(mar_aqp1_phylo_means,summary(mar_model_results_aqp1)$coefficients[2,4])
+names(mar_aqp1_phylo_means)=c("Marine", "Non-Marine","P.val")
+
+#AQP3
+mar_model_results_aqp3 <- phyloglm(AQP3.like~Mar_hab,
+                                    metazoa_mar_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(mar_model_results_aqp3, n=1)
+summary(mar_model_results_aqp3)$coefficients[2,4]
+
+mar_aqp3_phylo_means=c(exp(mar_model_results_aqp3$coefficients[1]),
+                        exp(mar_model_results_aqp3$coefficients[1]+mar_model_results_aqp3$coefficients[2]))
+names(mar_aqp3_phylo_means)=c("Marine", "Non-Marine")
+mar_aqp3_phylo_means
+
+mar_aqp3_phylo_means<-c(mar_aqp3_phylo_means,summary(mar_model_results_aqp3)$coefficients[2,4])
+names(mar_aqp3_phylo_means)=c("Marine", "Non-Marine","P.val")
+
+#AQP8
+mar_model_results_aqp8 <- phyloglm(AQP8.like~Mar_hab,
+                                    metazoa_mar_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(mar_model_results_aqp8, n=1)
+summary(mar_model_results_aqp8)$coefficients[2,4]
+
+mar_aqp8_phylo_means=c(exp(mar_model_results_aqp8$coefficients[1]),
+                        exp(mar_model_results_aqp8$coefficients[1]+mar_model_results_aqp8$coefficients[2]))
+names(mar_aqp8_phylo_means)=c("Marine", "Non-Marine")
+mar_aqp8_phylo_means
+
+mar_aqp8_phylo_means<-c(mar_aqp8_phylo_means,summary(mar_model_results_aqp8)$coefficients[2,4])
+names(mar_aqp8_phylo_means)=c("Marine", "Non-Marine","P.val")
+
+#AQP11
+mar_model_results_aqp11 <- phyloglm(AQP11.like~Mar_hab,
+                                    metazoa_mar_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(mar_model_results_aqp11, n=1)
+summary(mar_model_results_aqp11)$coefficients[2,4]
+
+mar_aqp11_phylo_means=c(exp(mar_model_results_aqp11$coefficients[1]),
+                        exp(mar_model_results_aqp11$coefficients[1]+mar_model_results_aqp11$coefficients[2]))
+names(mar_aqp11_phylo_means)=c("Marine", "Non-Marine")
+mar_aqp11_phylo_means
+
+mar_aqp11_phylo_means<-c(mar_aqp11_phylo_means,summary(mar_model_results_aqp11)$coefficients[2,4])
+names(mar_aqp11_phylo_means)=c("Marine", "Non-Marine","P.val")
+
+#All AQPs
+mar_model_results_all <- phyloglm(ALL~Mar_hab,
+                                    metazoa_mar_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(mar_model_results_all, n=1)
+summary(mar_model_results_all)$coefficients[2,4]
+
+mar_all_phylo_means=c(exp(mar_model_results_all$coefficients[1]),
+                        exp(mar_model_results_all$coefficients[1]+mar_model_results_all$coefficients[2]))
+names(mar_all_phylo_means)=c("Marine", "Non-Marine")
+mar_all_phylo_means
+
+mar_all_phylo_means<-c(mar_all_phylo_means,summary(mar_model_results_all)$coefficients[2,4])
+names(mar_all_phylo_means)=c("Marine", "Non-Marine","P.val")
+
+#All data together
+marine_data<-rbind(mar_aqp1_phylo_means,mar_aqp3_phylo_means,mar_aqp8_phylo_means,mar_aqp11_phylo_means,mar_all_phylo_means)
+rownames(marine_data)<-c("AQP1","AQP3","AQP8","AQP11","AllAQP")
+write.csv(marine_data,"/home/metazomics/AQPs/Poisson_files/All_phyla_results_marine_vs_non.csv")
+```
+
+####MOLLUSCA
+```{r mollusca ter_nonter}
+mollusca_data<-read.table("/home/metazomics/AQPs/Poisson_files/aqps_mollusca_no_intertidal.txt",header=TRUE,sep="\t") #Romanchella perrieri and ONFL2 no present in species tree
+
+sp_tree<-read.tree("/home/metazomics/AQPs/trees/mollusca.nwk")
+
+mollusca_terr_data <- mollusca_data%>%mutate(Terr_hab=case_when(Habitat=="Terrestrial"~"Terrestrial",grepl("Semiterrestrial", Habitat, fixed = TRUE)~"Terrestrial",TRUE~"Aquatic"))
+mollusca_terr_data$ALL<-c(mollusca_terr_data$AQP1.like+mollusca_terr_data$AQP3.like+mollusca_terr_data$AQP8.like+mollusca_terr_data$AQP11.like)
+rownames(mollusca_terr_data)<-mollusca_terr_data$Species
+
+
+#AQP1
+terr_model_results_aqp1 <- phyloglm(AQP1.like~Terr_hab,
+                                    mollusca_terr_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(terr_model_results_aqp1, n=1)
+summary(terr_model_results_aqp1)$coefficients[2,4]
+
+terr_aqp1_phylo_means=c(exp(terr_model_results_aqp1$coefficients[1]),
+                        exp(terr_model_results_aqp1$coefficients[1]+terr_model_results_aqp1$coefficients[2]))
+names(terr_aqp1_phylo_means)=c("Non-Terrestrial", "Terrestrial")
+terr_aqp1_phylo_means
+
+terr_aqp1_phylo_means<-c(terr_aqp1_phylo_means,summary(terr_model_results_aqp1)$coefficients[2,4])
+names(terr_aqp1_phylo_means)=c("Non-Terrestrial", "Terrestrial","P.val")
+
+#AQP3
+terr_model_results_aqp3 <- phyloglm(AQP3.like~Terr_hab,
+                                    mollusca_terr_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(terr_model_results_aqp3, n=1)
+summary(terr_model_results_aqp3)$coefficients[2,4]
+
+terr_aqp3_phylo_means=c(exp(terr_model_results_aqp3$coefficients[1]),
+                        exp(terr_model_results_aqp3$coefficients[1]+terr_model_results_aqp3$coefficients[2]))
+names(terr_aqp3_phylo_means)=c("Non-Terrestrial", "Terrestrial")
+terr_aqp3_phylo_means
+
+terr_aqp3_phylo_means<-c(terr_aqp3_phylo_means,summary(terr_model_results_aqp3)$coefficients[2,4])
+names(terr_aqp3_phylo_means)=c("Non-Terrestrial", "Terrestrial","P.val")
+
+#AQP8
+terr_model_results_aqp8 <- phyloglm(AQP8.like~Terr_hab,
+                                    mollusca_terr_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(terr_model_results_aqp8, n=1)
+summary(terr_model_results_aqp8)$coefficients[2,4]
+
+terr_aqp8_phylo_means=c(exp(terr_model_results_aqp8$coefficients[1]),
+                        exp(terr_model_results_aqp8$coefficients[1]+terr_model_results_aqp8$coefficients[2]))
+names(terr_aqp8_phylo_means)=c("Non-Terrestrial", "Terrestrial")
+terr_aqp8_phylo_means
+
+terr_aqp8_phylo_means<-c(terr_aqp8_phylo_means,summary(terr_model_results_aqp8)$coefficients[2,4])
+names(terr_aqp8_phylo_means)=c("Non-Terrestrial", "Terrestrial","P.val")
+
+#AQP11
+terr_model_results_aqp11 <- phyloglm(AQP11.like~Terr_hab,
+                                    mollusca_terr_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(terr_model_results_aqp11, n=1)
+summary(terr_model_results_aqp11)$coefficients[2,4]
+
+terr_aqp11_phylo_means=c(exp(terr_model_results_aqp11$coefficients[1]),
+                        exp(terr_model_results_aqp11$coefficients[1]+terr_model_results_aqp11$coefficients[2]))
+names(terr_aqp11_phylo_means)=c("Non-Terrestrial", "Terrestrial")
+terr_aqp11_phylo_means
+
+terr_aqp11_phylo_means<-c(terr_aqp11_phylo_means,summary(terr_model_results_aqp11)$coefficients[2,4])
+names(terr_aqp11_phylo_means)=c("Non-Terrestrial", "Terrestrial","P.val")
+
+#All AQPs
+terr_model_results_all <- phyloglm(ALL~Terr_hab,
+                                    mollusca_terr_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(terr_model_results_all, n=1)
+summary(terr_model_results_all)$coefficients[2,4]
+
+terr_all_phylo_means=c(exp(terr_model_results_all$coefficients[1]),
+                        exp(terr_model_results_all$coefficients[1]+terr_model_results_all$coefficients[2]))
+names(terr_all_phylo_means)=c("Non-Terrestrial", "Terrestrial")
+terr_all_phylo_means
+
+terr_all_phylo_means<-c(terr_all_phylo_means,summary(terr_model_results_all)$coefficients[2,4])
+names(terr_all_phylo_means)=c("Non-Terrestrial", "Terrestrial","P.val")
+
+#All data together
+terrestrial_data<-rbind(terr_aqp1_phylo_means,terr_aqp3_phylo_means,terr_aqp8_phylo_means,terr_aqp11_phylo_means,terr_all_phylo_means)
+rownames(terrestrial_data)<-c("AQP1","AQP3","AQP8","AQP11","AllAQP")
+write.csv(terrestrial_data,"/home/metazomics/AQPs/Poisson_files/Results_Mollusca_terrestrial_vs_non.csv")
+```
+
+```{r mollusca mar_nomarine}
+mollusca_data<-read.table("/home/metazomics/AQPs/Poisson_files/aqps_mollusca_no_intertidal.txt",header=TRUE,sep="\t") #Romanchella perrieri and ONFL2 no present in species tree
+
+sp_tree<-read.tree("/home/metazomics/AQPs/mollusca.nwk")
+
+mollusca_mar_data <- mollusca_data%>%mutate(Mar_hab=case_when(Habitat=="Marine"~"Marine",TRUE~"Non-Marine"))
+mollusca_mar_data$ALL<-c(mollusca_mar_data$AQP1.like+mollusca_mar_data$AQP3.like+mollusca_mar_data$AQP8.like+mollusca_mar_data$AQP11.like)
+rownames(mollusca_mar_data)<-mollusca_mar_data$Species
+
+
+#AQP1
+mar_model_results_aqp1 <- phyloglm(AQP1.like~Mar_hab,
+                                    mollusca_mar_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(mar_model_results_aqp1, n=1)
+summary(mar_model_results_aqp1)$coefficients[2,4]
+
+mar_aqp1_phylo_means=c(exp(mar_model_results_aqp1$coefficients[1]),
+                        exp(mar_model_results_aqp1$coefficients[1]+mar_model_results_aqp1$coefficients[2]))
+names(mar_aqp1_phylo_means)=c("Marine", "Non-Marine")
+mar_aqp1_phylo_means
+
+mar_aqp1_phylo_means<-c(mar_aqp1_phylo_means,summary(mar_model_results_aqp1)$coefficients[2,4])
+names(mar_aqp1_phylo_means)=c("Marine", "Non-Marine","P.val")
+
+#AQP3
+mar_model_results_aqp3 <- phyloglm(AQP3.like~Mar_hab,
+                                    mollusca_mar_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(mar_model_results_aqp3, n=1)
+summary(mar_model_results_aqp3)$coefficients[2,4]
+
+mar_aqp3_phylo_means=c(exp(mar_model_results_aqp3$coefficients[1]),
+                        exp(mar_model_results_aqp3$coefficients[1]+mar_model_results_aqp3$coefficients[2]))
+names(mar_aqp3_phylo_means)=c("Marine", "Non-Marine")
+mar_aqp3_phylo_means
+
+mar_aqp3_phylo_means<-c(mar_aqp3_phylo_means,summary(mar_model_results_aqp3)$coefficients[2,4])
+names(mar_aqp3_phylo_means)=c("Marine", "Non-Marine","P.val")
+
+#AQP8
+mar_model_results_aqp8 <- phyloglm(AQP8.like~Mar_hab,
+                                    mollusca_mar_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(mar_model_results_aqp8, n=1)
+summary(mar_model_results_aqp8)$coefficients[2,4]
+
+mar_aqp8_phylo_means=c(exp(mar_model_results_aqp8$coefficients[1]),
+                        exp(mar_model_results_aqp8$coefficients[1]+mar_model_results_aqp8$coefficients[2]))
+names(mar_aqp8_phylo_means)=c("Marine", "Non-Marine")
+mar_aqp8_phylo_means
+
+mar_aqp8_phylo_means<-c(mar_aqp8_phylo_means,summary(mar_model_results_aqp8)$coefficients[2,4])
+names(mar_aqp8_phylo_means)=c("Marine", "Non-Marine","P.val")
+
+#AQP11
+mar_model_results_aqp11 <- phyloglm(AQP11.like~Mar_hab,
+                                    mollusca_mar_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(mar_model_results_aqp11, n=1)
+summary(mar_model_results_aqp11)$coefficients[2,4]
+
+mar_aqp11_phylo_means=c(exp(mar_model_results_aqp11$coefficients[1]),
+                        exp(mar_model_results_aqp11$coefficients[1]+mar_model_results_aqp11$coefficients[2]))
+names(mar_aqp11_phylo_means)=c("Marine", "Non-Marine")
+mar_aqp11_phylo_means
+
+mar_aqp11_phylo_means<-c(mar_aqp11_phylo_means,summary(mar_model_results_aqp11)$coefficients[2,4])
+names(mar_aqp11_phylo_means)=c("Marine", "Non-Marine","P.val")
+
+#All AQPs
+mar_model_results_all <- phyloglm(ALL~Mar_hab,
+                                    mollusca_mar_data, phy=sp_tree,
+                                    method = "poisson_GEE")
+head(mar_model_results_all, n=1)
+summary(mar_model_results_all)$coefficients[2,4]
+
+mar_all_phylo_means=c(exp(mar_model_results_all$coefficients[1]),
+                        exp(mar_model_results_all$coefficients[1]+mar_model_results_all$coefficients[2]))
+names(mar_all_phylo_means)=c("Marine", "Non-Marine")
+mar_all_phylo_means
+
+mar_all_phylo_means<-c(mar_all_phylo_means,summary(mar_model_results_all)$coefficients[2,4])
+names(mar_all_phylo_means)=c("Marine", "Non-Marine","P.val")
+
+#All data together
+marine_data<-rbind(mar_aqp1_phylo_means,mar_aqp3_phylo_means,mar_aqp8_phylo_means,mar_aqp11_phylo_means,mar_all_phylo_means)
+rownames(marine_data)<-c("AQP1","AQP3","AQP8","AQP11","AllAQP")
+write.csv(marine_data,"/home/metazomics/AQPs/Poisson_files/Results_Mollusca_marine_vs_non.csv")
+```

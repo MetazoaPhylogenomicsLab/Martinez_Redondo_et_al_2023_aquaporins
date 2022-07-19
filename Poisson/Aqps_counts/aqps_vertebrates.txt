@@ -1,0 +1,14 @@
+Phylum	Species	Habitat	AQP1-like	AQP3-like	AQP8-like	AQP11-like
+"Chordata"	"Homo_sapiens"	"Terrestrial"	6	5	1	3
+"Chordata"	"Mus_musculus"	"Terrestrial"	6	3	1	2
+"Chordata"	"Sarcophilus_harrisii"	"Terrestrial"	7	4	1	2
+"Chordata"	"Ornithorhynchus_anatinus"	"Terrestrial"	7	4	1	2
+"Chordata"	"Taeniopygia_guttata"	"Terrestrial"	7	4	1	2
+"Chordata"	"Python_bivittatus"	"Terrestrial"	8	4	1	2
+"Chordata"	"Anolis_carolinensis"	"Terrestrial"	8	4	1	2
+"Chordata"	"Leptobrachium_leishanense"	"Freshwater"	14	5	1	2
+"Chordata"	"Latimeria_chalumnae"	"Marine"	8	4	1	2
+"Chordata"	"Oreochromis_niloticus"	"Freshwater"	9	7	2	3
+"Chordata"	"Danio_rerio"	"Freshwater"	7	7	4	2
+"Chordata"	"Lepisosteus_oculatus"	"Freshwater"	5	4	1	3
+"Chordata"	"Leucoraja_erinacea"	"Marine"	5	5	0	2

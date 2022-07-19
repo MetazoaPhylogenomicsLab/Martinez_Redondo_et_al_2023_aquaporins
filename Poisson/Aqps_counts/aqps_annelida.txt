@@ -1,0 +1,28 @@
+"Phylum"	"Species"	"Habitat"	"AQP1-like"	"AQP3-like"	"AQP8-like"	"AQP11-like"
+"Annelida"	"Helobdella robusta"	"Freshwater"	11	1	0	0
+"Annelida"	"Hirudo medicinalis"	"Freshwater"	7	0	0	0
+"Annelida"	"Hirudo verbana"	"Terrestrial, Freshwater"	11	0	0	0
+"Annelida"	"Glossoscolex paulistus"	"Terrestrial"	17	5	2	1
+"Annelida"	"Amynthas gracilis"	"Terrestrial"	15	4	1	1
+"Annelida"	"Eisenia andrei"	"Terrestrial"	19	3	1	3
+"Annelida"	"Eisenia fetida"	"Terrestrial"	33	15	4	1
+"Annelida"	"Lumbricus castaneus"	"Terrestrial"	12	7	2	1
+"Annelida"	"Lumbricus rubellus"	"Terrestrial"	30	14	1	4
+"Annelida"	"Enchytraeus crypticus"	"Terrestrial"	5	3	1	0
+"Annelida"	"Olavius algarvensis"	"Marine"	7	0	0	0
+"Annelida"	"Arenicola marina"	"Marine"	1	1	0	0
+"Annelida"	"Capitella teleta"	"Marine"	15	2	3	0
+"Annelida"	"Romanchella perrieri"	"Marine, Brackish"	1	2	1	0
+"Annelida"	"Spirobranchus lamarcki"	"Marine"	8	1	1	0
+"Annelida"	"Pygospio elegans"	"Marine"	5	1	2	0
+"Annelida"	"Streblospio benedicti"	"Marine, Freshwater"	2	0	0	0
+"Annelida"	"Lamellibrachia satsuma"	"Marine"	24	10	3	3
+"Annelida"	"Paraescarpia echinoscopica"	"Marine"	14	5	0	1
+"Annelida"	"Glycera tridactyla"	"Marine"	1	0	0	0
+"Annelida"	"Glycera dibranchiata"	"Marine"	5	1	2	0
+"Annelida"	"Alitta succinea"	"Marine, Freshwater, Brackish"	4	0	1	1
+"Annelida"	"Alitta virens"	"Marine"	5	2	1	2
+"Annelida"	"Perinereis aibuhitensis"	"Marine, Brackish"	11	2	2	2
+"Annelida"	"Platynereis dumerilii"	"Marine"	23	4	3	1
+"Annelida"	"Harmothoe imbricata"	"Marine"	3	0	0	0
+"Annelida"	"Ophryotrocha diadema"	"Marine"	2	3	0	0

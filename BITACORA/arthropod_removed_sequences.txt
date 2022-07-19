@@ -1,0 +1,38 @@
+AQP_ID	Reason_for_removal
+HMUL1_DN4787_c0_g2_i3	Reverse-complement of HMUL1_DN4787_c0_g1_i3
+TGER1_DN26058_c0_g1_i1	Reverse-complement of TGER1_DN26058_c0_g2_i1
+CQUA2_DN21648_c0_g1_i1	Reverse-complement of CQUA2_DN21648_c0_g2_i1
+AINS1_DN13476_c0_g2_i1	Reverse-complement of AINS1_DN13476_c0_g1_i1
+CSCU1_DN0_c0_g9727_i1.p1_split2 and CSCU1_DN0_c0_g9727_i1.p1_split1	Bitacora splits sequence in two identical ones
+PVAN1_DN0_c0_g18688_i1.p1	Same locus as PVAN1_DN0_c0_g18684_i1.p1
+FCAN1_DN0_c0_g15904_i2.p1	Same locus as FCAN1_DN0_c0_g15904_i2.p1
+TTRI1_DN0_c0_g25972_i1.p1_split2 and TTRI1_DN0_c0_g25972_i1.p1_split1	Bitacora splits sequence in two identical ones
+TURT1_DN0_c0_g3467_i3.p1	Isoform of TURT1_DN0_c0_g3463_i1.p1
+CSCU1_DN0_c0_g11984_i1.p1	Putative contamination
+OPIL1_DN39154_c0_g1_i1.p1	Putative contamination
+SYMP1_DN7561_c0_g1_i1.p1	Putative contamination
+TDOM1_DN97978_c0_g1_i1.p1	Putative contamination
+EAFF1_DN26199_c0_g1_i1.p1	Bacterial sequence
+SWEB1_DN31929_c0_g1_i1.p1	Putative contamination
+SCOL3_DN66059_c0_g1_i1.p1	Putative contamination
+CSEG1_DN5226_c0_g1_i1.p1	Putative contamination
+CSEG1_DN6737_c0_g1_i1.p1	Putative contamination
+CSEG1_DN9652_c0_g1_i1.p1	Putative contamination
+MAME1_DN38404_c0_g1_i1.p1	Putative contamination
+LCYP1_DN157408_c0_g1_i1.p1	Putative contamination
+LCYP1_DN90825_c0_g1_i1.p1	Putative contamination
+LCYP1_DN94735_c0_g1_i1.p1	Putative contamination
+LCYP1_DN12435_c0_g1_i1.p1	Putative contamination
+LCYP1_DN12435_c0_g2_i1.p1	Putative contamination
+LCYP1_DN20157_c0_g2_i1.p1	Putative contamination
+LCYP1_DN103851_c0_g1_i1.p1	Putative contamination
+LCYP1_DN86690_c0_g1_i1.p1	Putative contamination
+OPIL1_DN2154_c0_g1_i1.p1	Putative contamination
+LYNC1_DN11751_c0_g1_i1.p1	Putative contamination
+ORAT1_DN19361_c0_g1_i1.p1	Putative contamination. Removed in the final AQP(not glps) subtrees but not in the general one
+CQUA2_DN248235_c0_g1_i1.p1	Putative contamination. Removed in the final AQP(not glps) subtrees but not in the general one
+CSEG1_DN34962_c0_g1_i1.p1	Putative contamination. Removed in the final AQP(not glps) subtrees but not in the general one
+CQUA2_DN276996_c0_g1_i1.p1	Putative contamination. Removed in the final AQP12 tree but not in the general ones
+CJAP1_DN55557_c0_g1_i1.p1	Putative contamination. Removed in the final AQP4 tree but not in the general ones.
+CFIN1_DN62569_c0_g1_i1.p1       Putative contamination. Removed in the final GLP subtree but not in the general one.
+PFEM1_DN14851_c0_g1_i1.p1	Putative contamination. Removed in the final AQP4 subtree but not in the general ones.
