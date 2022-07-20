@@ -1,9 +1,10 @@
 # Parallel duplication and loss of aquaporin-coding genes during the ‘out of the sea’ transition paved the way for animal terrestrialization
 
-**Authors**: Gemma I. Martínez-Redondo^1, Carolina Simón Guerrero^1, Leandro Aristide^1, Pau Balart-García^1, Vanina Tonzo^1, Rosa Fernández^1
+**Authors**: Gemma I. Martínez-Redondo<sup>1</sup>, Carolina Simón Guerrero<sup>1,2</sup>, Leandro Aristide<sup>1</sup>, Pau Balart-García<sup>1</sup>, Vanina Tonzo<sup>1,3</sup>, Rosa Fernández<sup>1</sup>
 
-^1 Metazoa Phylogenomics Lab, Biodiversity Program, Institute of Evolutionary Biology (CSIC-Universitat Pompeu Fabra), Passeig Marítim de la Barceloneta 37-49, 08003 Barcelona, Spain
+<sup>1</sup> Metazoa Phylogenomics Lab, Biodiversity Program, Institute of Evolutionary Biology (CSIC-Universitat Pompeu Fabra), Passeig Marítim de la Barceloneta 37-49, 08003 Barcelona, Spain
 
+<sup>2</sup> Current institution: Biocomputing Unit, National Centre of Biotechnology (CNB-CSIC), Campus de Cantoblanco, 28049 Madrid, Spain.
 ***
 
  ![picture](img/picture.png)
