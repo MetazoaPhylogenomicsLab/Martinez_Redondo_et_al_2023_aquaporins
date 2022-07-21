@@ -13,4 +13,4 @@
 module load cesga/2020
 module load iq-tree/2.1.2
 
-iqtree2 -s aqps_arth_trimmed_gappyout.aln -m LG+C10+F+G -B 1000 -T 48 -ft aqps_arth_fasttree_trimmed_gappyout.treefile
+iqtree2 -s all_aqp1_trimmed_gappyout.aln -m LG+C10+F+G -B 1000 -T 48 -ft aqp1_fasttree_trimmed_gappyout.treefile

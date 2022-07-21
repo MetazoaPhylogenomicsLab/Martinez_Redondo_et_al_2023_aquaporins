@@ -12,4 +12,4 @@
 
 module load fasttree/2.1.11
 
-FastTree -lg aqps_arth_trimmed.aln > aqps_arth_fasttree_trimmed.treefile
+FastTree -lg $HOME/AQP1_4_phyla/all_aqp1_trimmed.aln > aqp1_fasttree_trimmed.treefile

@@ -13,4 +13,4 @@
 module load cesga/2018
 module load gcccore/6.4.0 trimal/1.4.1
 
-trimal -keepheader -in aqps.aln -out aqps_arth_trimmed_no_gaps.aln -noallgaps
+trimal -keepheader -in all_aqp1.aln -out all_aqp1_trimmed_no_gaps.aln -noallgaps

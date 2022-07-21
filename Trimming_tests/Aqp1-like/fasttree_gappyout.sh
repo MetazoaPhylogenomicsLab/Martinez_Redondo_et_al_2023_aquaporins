@@ -12,4 +12,4 @@
 
 module load fasttree/2.1.11
 
-FastTree -lg aqps_arth_trimmed_gappyout.aln > aqps_arth_fasttree_trimmed_gappyout.treefile
+FastTree -lg $HOME/AQP1_4_phyla/all_aqp1_trimmed_gappyout.aln > aqp1_fasttree_trimmed_gappyout.treefile

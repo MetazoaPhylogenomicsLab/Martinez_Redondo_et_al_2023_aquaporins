@@ -1,0 +1,820 @@
+---
+title: "Figures from Paper AQPs"
+author: "Gemma I. Martínez-Redondo"
+date: "12/04/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo=TRUE,
+ fig.width = 9,
+ fig.asp = 0.4,
+ out.width = "100%"
+)
+```
+
+```{r libraries}
+library(ggplot2)
+library(ggtree)
+library(phylobase)
+library(dplyr)
+library(tidyverse)
+library(reshape2)
+library(ggtreeExtra)
+library(deeptime)
+library(ggalt)
+library(cowplot)
+library(grid)
+library(ggpubr)
+#library(facetscales)
+library(ggplotify)
+library(ggimage)
+library(ggnewscale)
+library(treeio)
+library(phytools)
+library(ggalluvial)
+set.seed(1234)
+```
+
+## Figure 1: AQP count
+
+# ```{r figure1}
+# sp_tree<-read.tree("/home/metazomics/AQPs/all_phyla_tree.nwk")
+# count_data<-read.table("/home/metazomics/AQPs/Poisson_files/aqps_all_phyla_no_intertidal.txt",header=TRUE)
+# count_data_tree4d<-count_data%>% column_to_rownames(var="Species")
+# count_data_long<-reshape2::melt(count_data,id.vars=c("Phylum","Species","Habitat"),variable.name="AQP_type") %>% filter(Species!="ONFL2") %>% filter(Species!="Romanchella_perrieri") %>% filter(value!=0)
+# tree4d <- phylo4d( sp_tree, tip.data=count_data_tree4d)
+# xxyy<-phyloXXYY(tree4d)
+<!-- # ``` -->
+
+# ```{r figure1, echo=FALSE}
+# #Try with phylobase
+# phylobubbles(
+#   type = dotplot,
+#   place.tip.label = "right",
+#   show.node.label = show.node.label,
+#   rot = 0,
+#   # edge.color = edge.color,
+#   # node.color = node.color,
+#   # tip.color = tip.color,
+#   # edge.width = edge.width,
+#   newpage = TRUE,
+#   XXYY=xxyy,
+#   square = FALSE,
+#   grid = TRUE
+# )
+# ```
+
+# ```{r figure1, echo=FALSE}
+# #Try with ggtree, ggtreeExtra
+# f1<-ggtree(sp_tree, branch.length="rate",layout="fan",open.angle=180,size=0.1)#+coord_geo()+theme_tree2()
+# f1<-f1+geom_fruit(data=count_data_long,
+#     geom=geom_point,
+#     mapping=aes(x=AQP_type,y=Species,colour=AQP_type,size=value))
+# f1
+# #FILTER VALUES=0
+# ```
+
+```{r Tree data}
+#Time calibrated species tree
+sp_tree<-read.tree("/home/metazomics/AQPs/all_phyla_tree.nwk")
+```
+
+## AQP3
+```{r Figure AQP3}
+#Load AQP3 tree
+aqp3_tree<-treeio::read.newick("/home/metazomics/AQPs/all_phyla/AQP3/aqp3_rooted.contree", node.label="support")
+
+#Add root. DON'T USE THIS FUNCTION, CHANGES NODE LABELS FOR SOME REASON I DON'T UNDERSTAND
+#ROOTED TREE WITH ETE
+#aqp3_tree<- root(aqp3_tree, outgroup="Finn_AqpM_NP_988083_Archaea_Methanococcus_maripaludis_Euryarchaeota_Methanococcales_Methanococcaceae")
+
+#Identify interesting clades
+araq2<-MRCA(aqp3_tree,c("TMER1_DN0_c0_g2602_i1.p1","SROV1_DN381_c0_g1_i1.p1"))
+araq1<-MRCA(aqp3_tree,c("PELL1_DN85020_c0_g1_i1.p1","ACOL1_DN13954_c0_g1_i1.p1"))
+deut<-MRCA(aqp3_tree,c("Finn_Glp_ENSCINP00000019491_Vase_tunicate_Ciona_intestinalis_Tunicata_Enterogona_Cionidae","Platypus_AQP3"))
+aqp3_vert<-MRCA(aqp3_tree,c("Gar_Aqp3","Human_AQP3"))
+aqp7_vert<-MRCA(aqp3_tree,c("Coelacanth_Aqp7","Green_anole_Aqp7_ENSACAG00000012515"))
+aqp9_vert<-MRCA(aqp3_tree,c("Little_skate_Aqp9","Human_AQP9"))
+aqp10_vert<-MRCA(aqp3_tree,c("Little_skate_Aqp10C2","Green_anole_Aqp10_ENSACAG00000011521"))
+aqp13_vert<-MRCA(aqp3_tree,c("Finn_Aqp3L1_KJ784518/AEFG01033607/ENSPMAP00000008130_Sea_lamprey_Petromyzon_marinus_Hyperoartia_Petromyzontiformes_Petromyzontidae","Finn_AQP13_ENSXETP00000035583/AAMC02034374_Western_clawed_frog_Xenopus_Silurana_tropicalis_Amphibia_Anura_Pipidae"))
+lofo1<-MRCA(aqp3_tree,c("LSTA1_DN0_c0_g5351_i1.p1","HAEG1_DN523_c1_g1_i1.p1"))
+lofo2<-MRCA(aqp3_tree,c("GFPL01005650_c1416616","GIFV01016488_4621271"))
+mol1<-MRCA(aqp3_tree,c("LSTA1_DN0_c0_g5351_i1.p1","HAEG1_DN523_c1_g1_i1.p1"))
+ann1<-MRCA(aqp3_tree,c("GFPL01005650_c1416616","Paib_108111_c0_seq2"))
+mol2<-MRCA(aqp3_tree,c("NALB1_DN11253_c0_g1_i4.p1","MACO1_DN0_c0_g329_i1.p1"))
+ann2<-MRCA(aqp3_tree,c("GALF01016970_c1023286","GIFV01016488_4621271")) #Duplication
+mol3<-MRCA(aqp3_tree,c("CNIT1_DN3668_c1_g5_i1.p1","FKUR1_DN2966_c1_g1_i1.p1"))
+arth1<-MRCA(aqp3_tree,c("PLIT1_DN122_c1_g1_i2.p1","PURU1_DN14482_c0_g1_i1.p1"))
+arth2<-MRCA(aqp3_tree,c("TORB1_DN22382_c0_g1_i1.p1","SROV1_DN381_c0_g1_i1.p1"))
+prot1<-MRCA(aqp3_tree,c("VINF1_DN17958_c0_g1_i2.p1","GIFV01016488_4621271"))
+prot2<-MRCA(aqp3_tree,c("Hrob_95422","SROV1_DN381_c0_g1_i1.p1"))
+araq<-MRCA(aqp3_tree,c("PELL1_DN85020_c0_g1_i1.p1","SROV1_DN381_c0_g1_i1.p1"))
+onych1<-MRCA(aqp3_tree,c("ETOT1_DN1098_c0_g2_i8.p1","OKWA1_DN102150_c0_g1_i1.p1"))
+onych2<-MRCA(aqp3_tree,c("EROW2_DN56039_c1_g1_i4.p1","OKWA1_DN15664_c0_g1_i3.p1"))
+tardi1<-MRCA(aqp3_tree,c("G5CTF8_AQP1_Milesium","G5CTG5_AQP8_Milesium"))
+tardi2<-MRCA(aqp3_tree,c("G5CTG4_AQP7_Milesium","G5CTG7_AQP10_Milesium"))
+nematoda<-MRCA(aqp3_tree,c("NP_502044_AQP-3","NP_001370535_AQP-7"))
+#"CCD68565_AQP-8_Caenorhabditis"
+
+#Collapse nodes
+#test_collapse_xiph<-MRCA(aqp3_tree,c("TGIG1_DN0_c0_g24145_i1.p1","TGIG1_DN0_c0_g10542_i1.p1")) #Cannot collapse twice if node already collapsed
+
+###BOOTSTRAP
+data_aqp3_tree<-as_tibble(aqp3_tree)
+#Extract node label
+#bootsv <-data.frame(aqp3_tree[["node.label"]]) #support
+#ntip <- length(aqp3_tree[["tip.label"]])
+#nnode <- aqp3_tree[["Nnode"]]
+#bootstrap_data <- data.frame(lapply(bootsv, function(x) as.numeric(sub("/.*", "",x))))
+#bootstrap_data$node <- c((ntip + 1) : (ntip + nnode))
+#colnames(bootstrap_data) <- c("label","node")
+#bootstrap_data$label2 <- cut(as.numeric(bootstrap_data$label), breaks = c(70,80,90,95,100),right = F,include.lowest = TRUE)
+bootsv<-data.frame(data_aqp3_tree$support)
+ntip<-Ntip(aqp3_tree)
+nnode<-Nnode(aqp3_tree)
+bootstrap_data<-data.frame(lapply(bootsv, function(x) as.numeric(sub("/.*", "",x))),data_aqp3_tree$node)
+colnames(bootstrap_data)<-c("support","node")
+bootstrap_data$label2 <- cut(as.numeric(bootstrap_data$support), breaks = c(70,80,90,95,100),right = F,include.lowest = TRUE)
+# rename levels
+levels(bootstrap_data$label2) <- c(">70", ">80", ">90",">95")
+# remove null levels
+#bootstrap_data[is.na(bootstrap_data$label2),"label2"]<-"<50"
+#Put the results back into the tree.
+aqp3_tree[["node.label"]] <- bootstrap_data$label2
+aqp3_tree2 <- full_join(aqp3_tree, bootstrap_data, by = "node")
+#make a color list according to levels
+fun_color_range <- colorRampPalette(c("#B1B1B1", "#252525"))
+my_colors <- fun_color_range(nlevels(bootstrap_data$label2))
+#my_colors <- viridisLite::viridis(nlevels(bootstrap_data$label2))
+
+#Add clade strips before collapsing
+a<-ggtree(aqp3_tree2, layout="circular", branch.length = "none") +
+  xlim(1,NA) + #Reduce tree radius
+  geom_strip("SROV1_DN381_c0_g1_i1.p1","Hrob_95422", barsize=5, color="blue", label="prot2", offset.text=3, offset=15) +
+  geom_strip("VINF1_DN17958_c0_g1_i2.p1","GIFV01016488_4621271", barsize=5, color="blue", label="prot1", offset.text=6, offset=16) +
+  geom_strip("Finn2014_AQP3_ENSSARP00000001379_European_shrew_Sorex_araneus_Laurasiatheria_Insectivora_Soricidae","Finn_Glp_ENSCINP00000019491_Vase_tunicate_Ciona_intestinalis_Tunicata_Enterogona_Cionidae", barsize=5, color="blue", label="deut", offset.text=3, offset=20) +
+  geom_cladelab(node=araq1, label="araq1", offset=3, lineheight=5, offset.text=4)+
+  geom_cladelab(node=araq2, label="araq2", offset=3, lineheight=5, offset.text=1)+
+  geom_cladelab(node=mol1, label="mol1", offset=3, lineheight=5, offset.text=5)+
+  geom_cladelab(node=mol2, label="mol2", offset=3, lineheight=5, offset.text=9)+
+  geom_cladelab(node=mol3, label="mol3", offset=3, lineheight=5, offset.text=9)+
+  geom_cladelab(node=ann1, label="ann1", offset=3, lineheight=5, offset.text=5)+
+  geom_cladelab(node=ann2, label="ann2", offset=3, lineheight=5, offset.text=9)+
+  geom_cladelab(node=onych1, label="onych1", offset=3, lineheight=5, offset.text=2)+
+  geom_cladelab(node=onych2, label="onych2", offset=3, lineheight=5, offset.text=2)+
+  geom_cladelab(node=tardi1, label="tardi1", offset=3, lineheight=5, offset.text=2)+
+  geom_cladelab(node=tardi2, label="tardi2", offset=3, lineheight=5, offset.text=2)+
+  geom_cladelab(node=nematoda, label="nematoda", offset=3, lineheight=5, offset.text=2)+
+  geom_cladelab(node=aqp3_vert, label="AQP3", offset=3, lineheight=5, offset.text=2, fontsize=3)+
+  geom_cladelab(node=aqp7_vert, label="AQP7", offset=3, lineheight=5, offset.text=2, fontsize=3)+
+  geom_cladelab(node=aqp9_vert, label="AQP9", offset=3, lineheight=5, offset.text=2, fontsize=3)+
+  geom_cladelab(node=aqp10_vert, label="AQP10", offset=3, lineheight=5, offset.text=2, fontsize=3)+
+  geom_cladelab(node=aqp13_vert, label="AQP13", offset=3, lineheight=5, offset.text=2, fontsize=3)
+  #geom_treescale() #Not needed for topology
+
+b<-a%>% collapse(node=araq2, "max", fill="#EF476F", color="black") %>% collapse(node=araq1, "max", fill="#EF476F", color="black") %>% collapse(node=mol1, "max", fill="#3943B7", color="black") %>% collapse(node=mol2, "max", fill="#3943B7", color="black") %>% collapse(node=aqp3_vert, "max", fill="#06D6A0", color="black")  %>% collapse(node=aqp7_vert, "max", fill="#06D6A0", color="black")  %>% collapse(node=aqp9_vert, "max", fill="#06D6A0", color="black")  %>% collapse(node=aqp10_vert, "max", fill="#06D6A0", color="black")  %>% collapse(node=aqp13_vert, "max", fill="#06D6A0", color="black")  %>% collapse(node=arth1, "max", fill="#EF476F", color="black")  %>% collapse(node=ann1, "max", fill="#FFD166", color="black")  %>% collapse(node=ann2, "max", fill="#FFD166", color="black")  %>% collapse(node=mol3, "max", fill="#3943B7", color="black") %>% collapse(node=onych1, "max", fill="#6a329f", color="black") %>% collapse(node=onych2, "max", fill="#6a329f", color="black") %>% collapse(node=tardi1, "max", fill="#e69138", color="black")%>% collapse(node=tardi2, "max", fill="#e69138", color="black")%>% collapse(node=nematoda, "max", fill="#DA4A4A", color="black")+
+  geom_point2(aes(subset=!isTip,color=label2), size=1,na.rm=TRUE)+scale_color_manual("Bootstrap support", #BOOTSTRAP PLOT
+                      values = my_colors,
+                      na.translate = F,#remove na,
+                      labels = levels(bootstrap_data$label2))+
+new_scale_color()
+
+#a %>% scaleClade(node=aqp13_vert,3) %>% scaleClade(ann1,3) %>% scaleClade(araq,0.1) %>% scaleClade(arth1,0.3) %>% scaleClade(mol1,0.3)  %>% scaleClade(aqp3_vert,0.9)
+
+aqp3_habitat_data<-read.table("/home/metazomics/AQPs/all_phyla/AQP3/aqp3_habitat.txt",header=FALSE,sep="\t")
+colnames(aqp3_habitat_data)<-c("Tip","Habitat")
+aqp3_habitat_data<- aqp3_habitat_data %>% mutate(Color=factor(levels=c("#0a9396","#94d2bd","#005f73","#BB3E03"), case_when(Habitat=="Terrestrial"~"#BB3E03",Habitat=="Marine"~"#005f73", Habitat=="Freshwater"~"#94d2bd",Habitat=="Brackish"~"#0a9396")))
+
+b%<+% aqp3_habitat_data + geom_tippoint(aes(color=as.factor(Habitat)), size=1, na.rm=TRUE)+scale_color_manual(name="Habitat",values=levels(aqp3_habitat_data$Color), na.value=NA)
+
+#b%<+% aqp3_habitat_data +geom_fruit(data=habitat_data, geom=geom_tile, mapping=aes(color=as.factor(Habitat)))+scale_color_manual(name="Habitat",values=levels(habitat_data$Color), na.value=NA)
+
+
+#Save tree
+pdf("/home/metazomics/AQPs/Figures/aqp3.pdf", width=6,height=6)
+b
+dev.off()
+
+
+#viewClade(as.phylo(aqp3_tree), MRCA(aqp3_tree, araq1, araq2))
+
+
+#Arachnida duplication zoom in
+araq_dup_pre<-ape::extract.clade(as.phylo(aqp3_tree),MRCA(aqp3_tree,c(araq1,araq2)))
+
+araq_dup<-groupClade(araq_dup_pre,c(MRCA(araq_dup_pre,c("LTHA1_DN828_c0_g2_i1.p1","MLEI1_DN4126_c0_g1_i2.p1")),MRCA(araq_dup_pre,c("CCEL1_DN816_c2_g1_i1.p1","UMOR1_DN1681_c0_g1_i1.p1")),MRCA(araq_dup_pre,c("DAMO1_DN32954_c0_g1_i1.p1","CISR1_DN6917_c0_g1_i1.p1")),MRCA(araq_dup_pre,c("RATE1_DN145056_c0_g1_i2.p1","CBEC1_DN4530_c0_g1_i1.p1")),MRCA(araq_dup_pre,c("SEGE1_DN44779_c0_g1_i1.p1","TSAV1_DN2398_c0_g1_i7.p1")),MRCA(araq_dup_pre,c("TGIG1_DN0_c0_g10542_i1.p1","TGIG1_DN0_c0_g15554_i1.p1")),MRCA(araq_dup_pre,c("PSIN1_DN38369_c0_g1_i3.p1","FMAR1_DN44508_c0_g1_i2.p1")),MRCA(araq_dup_pre,c("PSSP1_DN2195_c0_g1_i6.p1","PROT2_DN2499_c1_g1_i1.p1")),MRCA(araq_dup_pre,c("SOLP1_DN2556_c0_g1_i9.p1","GALE2_DN16222_c0_g1_i4.p1")),MRCA(araq_dup_pre,c("TSTE1_DN7077_c0_g1_i2.p1","PBAE1_DN33_c0_g1_i2.p1")),MRCA(araq_dup_pre,c("GOCC1_DN0_c0_g4590_i1.p1","VJAC1_DN0_c0_g1400_i1.p1")),MRCA(araq_dup_pre,c("OROS1_DN4912_c0_g1_i1.p1","RSAN1_DN0_c0_g9663_i1.p1")),MRCA(araq_dup_pre,c("SOLP1_DN51203_c0_g1_i1.p1","PSUB1_DN977_c0_g2_i5.p1")),MRCA(araq_dup_pre,c("SOLP1_DN51203_c0_g1_i1.p1","GALE2_DN663_c0_g1_i5.p1")),MRCA(araq_dup_pre,c("EZAR1_DN104519_c0_g1_i1.p1","EZAR1_DN6178_c0_g1_i1.p1")),MRCA(araq_dup_pre,c("HRUF1_DN2688_c0_g1_i7.p1","NPAL1_DN8844_c0_g1_i2.p1")),MRCA(araq_dup_pre,c("RROB1_DN29306_c0_g1_i1.p1","ACOL1_DN25541_c0_g1_i2.p1")),MRCA(araq_dup_pre,c("HRUF1_DN32477_c0_g1_i1.p1","NPAL1_DN5166_c1_g1_i2.p1")),MRCA(araq_dup_pre,c("DTIN1_DN0_c0_g10305_i1.p1","DTIN1_DN0_c0_g15564_i1.p1")),MRCA(araq_dup_pre,c("NPAL1_DN242_c0_g1_i9.p1","HRUF1_DN55966_c0_g1_i1.p1")),MRCA(araq_dup_pre,c("VJAC1_DN0_c0_g7211_i2.p1","TMER1_DN0_c0_g2602_i1.p1")),MRCA(araq_dup_pre,c("RMIN1_DN145_c3_g1_i1.p1","FMAR1_DN31505_c0_g1_i1.p1")),MRCA(araq_dup_pre,c("CCEL1_DN16202_c0_g1_i1.p1","KACA1_DN1826_c0_g1_i1.p1")),MRCA(araq_dup_pre,c("DAMO1_DN36691_c0_g1_i2.p1","CIOA1_DN6639_c0_g1_i1.p1")),MRCA(araq_dup_pre,c("PSSP1_DN47388_c0_g1_i1.p1","ICRA1_DN35244_c0_g1_i2.p1")),MRCA(araq_dup_pre,c("LPOL1_DN0_c0_g1311_i1.p1","TGIG1_DN0_c0_g15553_i1.p1")),MRCA(araq_dup_pre,c("RATE1_DN5354_c0_g1_i6.p1","CRYP1_DN9054_c0_g1_i4.p1")),MRCA(araq_dup_pre,c("OROS1_DN2325_c0_g1_i3.p1","HEXC1_DN85_c0_g1_i17.p1")),MRCA(araq_dup_pre,c("THER1_DN5945_c2_g1_i13.p1","HREM1_DN2475_c0_g1_i1.p1")),MRCA(araq_dup_pre,c("RROB1_DN5034_c0_g1_i3.p1","NPAL1_DN2997_c0_g1_i5.p1")),MRCA(araq_dup_pre,c("SSCA1_DN0_c0_g5341_i1.p1","PCIT1_DN6025_c0_g1_i1.p1")),MRCA(araq_dup_pre,c("PTEP1_DN0_c0_g9423_i1.p1","ABRU1_DN0_c0_g20109_i1.p1")),MRCA(araq_dup_pre,c("CIOA1_DN18702_c0_g2_i1.p1","PMAR1_DN3434_c0_g1_i1.p1")),MRCA(araq_dup_pre,c("ISCA1_DN0_c0_g8472_i1.p1","HEXC1_DN4192_c0_g1_i3.p1")),MRCA(araq_dup_pre,c("ISCA1_DN0_c0_g10204_i1.p1","RSAN1_DN0_c0_g14792_i1.p1")),MRCA(araq_dup_pre,c("RATE1_DN2901_c0_g1_i4.p1","CRYP1_DN41541_c0_g1_i1.p1")),MRCA(araq_dup_pre,c("OECO1_DN35640_c0_g1_i1.p1","PALB1_DN173_c0_g1_i2.p1"))))
+
+
+pdf("/home/metazomics/AQPs/Figures/arachnids_aqp3.pdf", width=6,height=8)
+ggtree(araq_dup, aes(color=group))+geom_treescale(x=5,y=0)
+dev.off()
+
+#Annelid 1 zoom in
+rename_tips_ann<-read.table("/home/metazomics/AQPs/all_phyla/AQP3/itool_edit_labels_AQPs_r.txt",header=FALSE,sep="\t")
+ann_dup<-ape::extract.clade(as.phylo(aqp3_tree),MRCA(aqp3_tree,c("GALF01016970_c1023286","GIFV01016488_4621271")))
+ann_dup_tips<-as.data.frame(ann_dup$tip.label) %>% rename(V1="ann_dup$tip.label")
+subset_rename<-inner_join(ann_dup_tips, rename_tips_ann, by="V1")
+pdf("/home/metazomics/AQPs/Figures/annelid_aqp3.pdf", width=6,height=6)
+ggtree(ann_dup) %<+% subset_rename+geom_tiplab(aes(label=V2,parse=T))+geom_treescale(x=1.8,y=0)+xlim(NA,2)
+dev.off()
+
+#Arthropods zoom in
+arth1<-ape::extract.clade(as.phylo(aqp3_tree),MRCA(aqp3_tree,c("OJAP1_DN954_c0_g1_i2.p1","ETIC1_DN4941_c0_g1_i2.p1")))
+pdf("/home/metazomics/AQPs/Figures/arth1_aqp3.pdf", width=6,height=6)
+ggtree(arth1)+geom_treescale(x=1.8,y=0)
+dev.off()
+arth2a<-ape::extract.clade(as.phylo(aqp3_tree),MRCA(aqp3_tree,c("PFEM1_DN32599_c0_g1_i1.p1","ETAI1_DN814_c0_g1_i2.p1")))
+pdf("/home/metazomics/AQPs/Figures/arth2a_aqp3.pdf", width=6,height=6)
+ggtree(arth2a)+geom_treescale(x=2,y=0)
+dev.off()
+arth2b<-ape::extract.clade(as.phylo(aqp3_tree),MRCA(aqp3_tree,c("AROY1_DN782_c0_g1_i6.p1","CFIN1_DN49263_c0_g1_i19.p1")))
+pdf("/home/metazomics/AQPs/Figures/arth2b_aqp3.pdf", width=6,height=6)
+ggtree(arth2b)+geom_treescale(x=1.8,y=0)
+dev.off()
+
+#Caenogastropoda freshwater duplication
+caeno_mol2<-ape::extract.clade(as.phylo(aqp3_tree),MRCA(aqp3_tree,c("PELE1_DN1562_c0_g1_i1.p1","BGON1_DN3865_c3_g1_i1.p1")))
+pdf("/home/metazomics/AQPs/Figures/caenogastr_aqp3.pdf", width=6,height=6)
+ggtree(caeno_mol2)+geom_treescale(x=1.5,y=0)+geom_tiplab()+xlim(NA,2.5)
+dev.off()
+
+#Onychophora-tardigrade duplications
+onych_tardi<-ape::extract.clade(as.phylo(aqp3_tree),MRCA(aqp3_tree,c("ETOT1_DN1098_c0_g2_i8.p1","G5CTG7_AQP10_Milesium")))
+pdf("/home/metazomics/AQPs/Figures/onych_tardi_aqp3.pdf", width=6,height=6)
+ggtree(onych_tardi)+geom_treescale(x=1.5,y=0)+geom_tiplab()+xlim(NA,4)
+dev.off()
+
+#p2 = collapse(p1, 11, "Clade DE")
+#p3 = collapse(p2, 10, "Clade BC")
+#p3 + geom_nodelab(aes(subset = node == 10 | node == 11, angle=angle), hjust=-.1)
+#geom_nodelab(aes(subset=node%in%c(araq2,araq1,mol1,mol2,aqp3_vert,aqp7_vert,aqp9_vert,aqp10_vert,aqp13_vert,arth1,ann1,ann2,mol3)))
+```
+
+
+```{r test comparison trees}
+aqp1_arth_tree<-treeio::read.newick("/home/metazomics/AQPs/arthropoda/aqp4_arth_rooted.contree", node.label="support")
+
+tree1<-ape::extract.clade(as.phylo(aqp1_tree),MRCA(aqp1_tree,c("TTRI1_DN0_c0_g776_i1.p1","SSTA1_DN5636_c0_g1_i2.p1")))
+tree2<-ape::extract.clade(as.phylo(aqp1_arth_tree),MRCA(aqp1_arth_tree,c("TTRI1_DN0_c0_g776_i1.p1","OJAP1_DN5368_c0_g1_i1.p1")))
+
+#Keep branches common to both trees
+association<-inner_join(data.frame(V1=tree1$tip.label,V2=tree1$tip.label),data.frame(V1=tree2$tip.label,V2=tree2$tip.label),by="V1") %>% rename(Gene_name=V1)
+
+#Weird plot
+#cophyloplot(tree1, tree2, assoc=association, length.line=6, show.tip.label=FALSE)
+
+#Set colors for lines
+#1. Table with species assigned to class color (from species tree)
+arth_sp_color_table<-rbind(cbind(ape::extract.clade(sp_tree2, chelicerata)$tip.label, "#FFBF7F"), cbind(ape::extract.clade(sp_tree2, myriapoda)$tip.label, "#32FF00"),cbind(ape::extract.clade(sp_tree2, pancrustacea)$tip.label, "#A5EDFF")) %>% as.data.frame()  #Chelicerata, Myriapoda, Pancrustacea
+colnames(arth_sp_color_table)<-c("Species","Color")
+#2. Identify gene colors based on species (stringr)
+species_colors<-str_extract_all(association$Gene_name,"^[^_]+") %>% as.matrix() %>% as.data.frame() %>% rename(Species=V1) %>% mutate(Species=as.character(Species)) %>% left_join(arth_sp_color_table, by="Species")
+aqp1_comp_color_table<-cbind(association$Gene_name,species_colors)
+colnames(aqp1_comp_color_table)<-c("Gene_name","Species","Color")
+palette<-aqp1_comp_color_table$Color
+palette<-make.transparent(palette,0.5)
+
+tree1$edge.length<-NULL
+tree2$edge.length<-NULL
+#Nice (tutorial: http://blog.phytools.org/2015/07/more-on-new-method-for-co-phylogenetic.html)
+pdf("/home/metazomics/AQPs/Figures/tanglegram.pdf", width=6,height=6)
+plot(cophylo(tree1, tree2, assoc=association, length.line=6, show.tip.label=FALSE, rotate=TRUE),ftype="off", link.type="curved", link.lty="solid",link.col=palette) #ftype="off" removes tip labels
+dev.off()
+```
+
+## AQP1
+```{r Figure AQP1}
+#Load AQP1 tree
+aqp1_tree<-treeio::read.newick("/home/metazomics/AQPs/all_phyla/AQP1/without_eglps/aqp1_rooted.nwk", node.label="support")
+
+#Add root
+#aqp1_tree<- root(aqp1_tree, outgroup="Finn_AqpM_NP_988083_Archaea_Methanococcus_maripaludis_Euryarchaeota_Methanococcales_Methanococcaceae")
+
+#Identify interesting clades
+bila2<-MRCA(aqp1_tree,c("LSTA1_DN0_c0_g39095_i1.p1","PBAE1_DN54859_c0_g1_i1.p1"))
+bila1<-MRCA(aqp1_tree,c("ABIP1_DN157726_c0_g1_i1.p1","LFLA1_DN3393_c1_g1_i2.p1"))
+bib<-MRCA(aqp1_tree,c("OCHY1_DN2020_c7_g1_i1.p1","PIMP1_DN1102_c0_g2_i6.p1"))
+prip_like<-MRCA(aqp1_tree,c("HGAB1_DN6880_c0_g1_i2.p1","SFRU1_DN0_c0_g1268_i1.p1")) #Polyphyletic. Includes Drip clade inside
+maqp<-MRCA(aqp1_tree,c("MBIL1_DN5881_c0_g1_i11.p1","ECHI1_DN6269_c0_g2_i5.p1"))
+mglp<-MRCA(aqp1_tree,c("BGLA1_DN0_c0_g22859_i1.p1","BSIM1_DN15364_c0_g2_i2.p1"))
+ann1<-MRCA(aqp1_tree,c("GFPL01014938_c984307","GGRB01032355_c800246"))
+mol1<-MRCA(aqp1_tree,c("FKUR1_DN134458_c0_g1_i1.p1","DROS1_DN0_c0_g33159_i1.p1"))
+ann3<-MRCA(aqp1_tree,c("GHDL01029555_c984217","GEHO01220646_c730114"))
+ann4<-MRCA(aqp1_tree,c("GASB01029351_271972","GIFV01045788_2361015"))
+ann2<-MRCA(aqp1_tree,c("GASB01028216_96803","GIKG01090008_267980"))
+mol2<-MRCA(aqp1_tree,c("GTOL1_DN94457_c0_g1_i1.p1","LFLA1_DN3393_c1_g1_i2.p1"))
+mol3<-MRCA(aqp1_tree,c("DROS1_DN0_c0_g4832_i1.p1","CRVI1_DN0_c0_g33520_i2.p1"))
+mol4<-MRCA(aqp1_tree,c("ACRA1_DN37685_c0_g1_i1.p1","MFRU1_DN72855_c0_g1_i1.p1"))
+ann5<-MRCA(aqp1_tree,c("GENQ01035561_c6446","GHDM01081201_242904"))
+mol5<-MRCA(aqp1_tree,c("OBAN1_DN19846_c0_g1_i1.p1","FSAG1_DN4149_c1_g1_i1.p1"))
+arth<-MRCA(aqp1_tree,c("PTEP1_DN0_c0_g15575_i1.p1","MHRA1_DN65271_c0_g1_i1.p1"))
+deut<-MRCA(aqp1_tree,c("Finn2014_AQP14_ENSACAP00000023015_Green_anole_Anolis_carolinensis_Lepidosauria_Squamata_Iguanidae","Finn2014_AQP5_XP_005570852.1_Crab-eating_macaque_Macaca_fascicularis_Euarchontoglires_Primates_Cercopithecidae"))
+onych1<-MRCA(aqp1_tree,c("OKWA1_DN101191_c0_g1_i1.p1","EROW2_DN162679_c0_g1_i1.p1"))
+onych2<-MRCA(aqp1_tree,c("ETOT1_DN17005_c0_g2_i1.p1","ETOT1_DN2602_c0_g1_i1.p1"))
+onych3<-MRCA(aqp1_tree,c("EPPA1_DN197794_c0_g1_i1.p1","EPPA1_DN5230_c0_g1_i4.p1"))
+ann6<-MRCA(aqp1_tree,c("HALR01320802_1654","GWHPACBE003805"))
+
+#Add clade strips before collapsing
+#b<-ggtree(aqp1_tree, layout="circular", branch.length = "none") +
+#  xlim(1,NA) + #Reduce tree radius
+#  +
+#  geom_label_repel(aes(label=support, fill=support))+
+#  geom_treescale()
+#b %>% 
+  
+###BOOTSTRAP
+data_aqp1_tree<-as_tibble(aqp1_tree)
+bootsv<-data.frame(data_aqp1_tree$support)
+ntip<-Ntip(aqp1_tree)
+nnode<-Nnode(aqp1_tree)
+bootstrap_data_aqp1<-data.frame(lapply(bootsv, function(x) as.numeric(sub("/.*", "",x))),data_aqp1_tree$node)
+colnames(bootstrap_data_aqp1)<-c("support","node")
+bootstrap_data_aqp1$label2 <- cut(as.numeric(bootstrap_data_aqp1$support), breaks = c(70,80,90,95,100),right = F,include.lowest = TRUE)
+# rename levels
+levels(bootstrap_data_aqp1$label2) <- c(">70", ">80", ">90",">95")
+#Put the results back into the tree.
+aqp1_tree2 <- full_join(aqp1_tree, bootstrap_data_aqp1, by = "node")
+#make a color list according to levels
+fun_color_range <- colorRampPalette(c("#B1B1B1", "#252525"))
+my_colors <- fun_color_range(nlevels(bootstrap_data_aqp1$label2))
+
+#Add clade strips before collapsing
+fa1<-ggtree(aqp1_tree2, layout="circular", branch.length = "none") +
+  xlim(1,NA) + #Reduce tree radius
+  geom_strip("MGUT1_DN47006_c0_g1_i1.p1","Finn2014_AQP14_ENSACAP00000023015_Green_anole_Anolis_carolinensis_Lepidosauria_Squamata_Iguanidae", barsize=5, color="blue", label="bila2", offset.text=3, offset=16) +
+  geom_strip("PFUC1_DN0_c0_g19348_i1.p1","ECHI1_DN6269_c0_g2_i5.p1", barsize=5, color="blue", label="bila1", offset.text=8, offset=16) +
+  geom_cladelab(node=mol3, label="mol3", offset=3, lineheight=5, offset.text=5)+
+  geom_cladelab(node=bib, label="Bib", offset=3, lineheight=5, offset.text=1)+
+  geom_cladelab(node=prip_like, label="Prip-like", offset=3, lineheight=5, offset.text=1)+
+  geom_cladelab(node=mglp, label="Mglp", offset=3, lineheight=5, offset.text=7)+
+  geom_cladelab(node=maqp, label="Maqp", offset=3, lineheight=5, offset.text=7)+
+  geom_cladelab(node=ann1, label="ann1", offset=3, lineheight=5, offset.text=1)+
+  geom_cladelab(node=mol1, label="mol1", offset=3, lineheight=5, offset.text=5)+
+  geom_cladelab(node=ann3, label="ann3", offset=3, lineheight=5, offset.text=7)+
+  geom_cladelab(node=ann4, label="ann4", offset=3, lineheight=5, offset.text=7)+
+  geom_cladelab(node=ann2, label="ann2", offset=3, lineheight=5, offset.text=5)+
+  geom_cladelab(node=mol2, label="mol2", offset=3, lineheight=5, offset.text=7)+
+  geom_cladelab(node=mol4, label="mol4", offset=3, lineheight=5, offset.text=1)+
+  geom_cladelab(node=mol5, label="mol5", offset=3, lineheight=5, offset.text=1)+
+  geom_cladelab(node=ann5, label="ann5", offset=3, lineheight=5, offset.text=1)+
+  geom_cladelab(node=arth, label="arth", offset=3, lineheight=5, offset.text=2)+
+  geom_cladelab(node=deut, label="deut", offset=3, lineheight=5, offset.text=5)+
+  geom_cladelab(node=onych1, label="onych1", offset=3, lineheight=5, offset.text=5)+
+  geom_cladelab(node=onych2, label="onych2", offset=3, lineheight=5, offset.text=5)+
+  geom_cladelab(node=onych3, label="onych3", offset=3, lineheight=5, offset.text=5)+
+  geom_cladelab(node=ann6, label="ann6", offset=3, lineheight=5, offset.text=7)
+
+fa1b<-fa1%>% collapse(node=bib, "max", fill="#EF476F", color="black") %>% collapse(node=mol1, "max", fill="#3943B7", color="black") %>% collapse(node=mol2, "max", fill="#3943B7", color="black") %>% collapse(node=prip_like, "max", fill="#EF476F", color="black")  %>% collapse(node=mglp, "max", fill="#3943B7", color="black")  %>% collapse(node=maqp, "max", fill="#3943B7", color="black") %>% collapse(node=arth, "max", fill="#EF476F", color="black")  %>% collapse(node=mol4, "max", fill="#3943B7", color="black")   %>% collapse(node=ann1, "max", fill="#FFD166", color="black")  %>% collapse(node=ann2, "max", fill="#FFD166", color="black")  %>% collapse(node=mol5, "max", fill="#3943B7", color="black") %>% collapse(node=ann3, "max", fill="#FFD166", color="black")%>% collapse(node=ann4, "max", fill="#FFD166", color="black")%>% collapse(node=ann5, "max", fill="#FFD166", color="black") %>% collapse(node=deut, "max", fill="#06D6A0", color="black")%>% collapse(node=onych1, "max", fill="#6a329f", color="black")%>% collapse(node=onych2, "max", fill="#6a329f", color="black")%>% collapse(node=onych3, "max", fill="#6a329f", color="black")%>% collapse(node=ann6, "max", fill="#6a329f", color="black")+
+  geom_point2(aes(subset=!isTip,color=label2), size=1,na.rm=TRUE)+scale_color_manual("Bootstrap support", #BOOTSTRAP PLOT
+                      values = my_colors,
+                      na.translate = F,#remove na,
+                      labels = levels(bootstrap_data_aqp1$label2))
+
+pdf("/home/metazomics/AQPs/Figures/aqp1.pdf", width=6,height=6)
+fa1b
+dev.off()
+
+#Represent specific interesting clades
+#Prip-like+Drip
+drip_prip<-ape::extract.clade(as.phylo(aqp1_tree),prip_like)
+pdf("/home/metazomics/AQPs/Figures/drip_prip_aqp1.pdf", width=6,height=10)
+ggtree(drip_prip)+geom_treescale(x=1.5,y=0)+xlim(NA,2.5)
+dev.off()
+
+#Malacoglyceroporins panpulmonata (except PBUC1)
+mglp_tree<-ape::extract.clade(as.phylo(aqp1_tree),mglp)
+pdf("/home/metazomics/AQPs/Figures/mglp_aqp1.pdf", width=6,height=10)
+ggtree(mglp_tree)+geom_treescale(x=1.5,y=0)+geom_tiplab()+xlim(NA,6)
+dev.off()
+
+#Malacoaquaporins panpulmonata
+maqp_tree<-ape::extract.clade(as.phylo(aqp1_tree),MRCA(aqp1_tree, c("DRET1_DN10879_c0_g1_i2.p1","LFLA1_DN4157_c0_g1_i2.p1")))
+pdf("/home/metazomics/AQPs/Figures/maqp_aqp1.pdf", width=6,height=10)
+ggtree(maqp_tree)+geom_treescale(x=1.5,y=0)+geom_tiplab()+xlim(NA,6)
+dev.off()
+
+#Dupl stylommatophora
+stylom_mol1<-ape::extract.clade(as.phylo(aqp1_tree),mol1)
+pdf("/home/metazomics/AQPs/Figures/stylom_mol1_aqp1.pdf", width=6,height=10)
+ggtree(stylom_mol1)+geom_treescale(x=1.5,y=0)+geom_tiplab()+xlim(NA,3)
+dev.off()
+
+#Annelids
+rename_tips_ann_aqp1<-read.table("/home/metazomics/AQPs/all_phyla/AQP1/some_annelids_headers_for_r.txt",header=FALSE,sep="\t")
+#ggtree(ann_dup) %<+% subset_rename+geom_tiplab(aes(label=V2,parse=T))+geom_treescale(x=1.8,y=0)+xlim(NA,2)
+#Ann_6
+ann_6<-ape::extract.clade(as.phylo(aqp1_tree),ann6)
+ann_6_new_tips<-as.data.frame(ann_6$tip.label) %>% rename(V1="ann_6$tip.label")
+subset_rename_ann6<-inner_join(ann_6_new_tips, rename_tips_ann_aqp1, by="V1")
+pdf("/home/metazomics/AQPs/Figures/ann_6_aqp1.pdf", width=6,height=12)
+ggtree(ann_6)%<+% subset_rename_ann6+geom_tiplab(aes(label=V2,parse=T)) +geom_treescale(x=1.5,y=0)+xlim(NA,3)
+dev.off()
+#Ann_4
+ann_4<-ape::extract.clade(as.phylo(aqp1_tree),ann4)
+ann_4_new_tips<-as.data.frame(ann_4$tip.label) %>% rename(V1="ann_4$tip.label")
+subset_rename_ann4<-inner_join(ann_4_new_tips, rename_tips_ann_aqp1, by="V1")
+pdf("/home/metazomics/AQPs/Figures/ann_4_aqp1.pdf", width=6,height=6)
+ggtree(ann_4)%<+% subset_rename_ann4+geom_tiplab(aes(label=V2,parse=T))+geom_treescale(x=1.5,y=0)+xlim(NA,4)
+dev.off()
+#Ann_2
+ann_2<-ape::extract.clade(as.phylo(aqp1_tree),ann2)
+ann_2_new_tips<-as.data.frame(ann_2$tip.label) %>% rename(V1="ann_2$tip.label")
+subset_rename_ann2<-inner_join(ann_2_new_tips, rename_tips_ann_aqp1, by="V1")
+pdf("/home/metazomics/AQPs/Figures/ann_2_aqp1.pdf", width=6,height=6)
+ggtree(ann_2)%<+% subset_rename_ann2+geom_tiplab(aes(label=V2,parse=T))+geom_treescale(x=1.5,y=0)+xlim(NA,4)
+dev.off()
+
+```
+
+## Figure Terrestrialization events
+```{r Figure}
+#ggtree(sp_tree, layout="rectangular", size=0.1, branch.length="none") + geom_tree() + theme_tree()+ geom_label(aes(label=node, hjust=-.3), label.size=0.0001)
+#Nodes to paint
+
+sp_tree3<-groupClade(sp_tree, c(arachnida,myriapoda,isopoda,hexapoda,diptera,ter_diptera,stylommatophora,ellobioidae,crassiclitellata,tetrapoda,ter_crab,branchiopoda,paleoptera,megaloptera,coleoptera,fresh_gastropoda1,fresh_gastropoda2,fresh_bivalvia,hirudinia,remipedia_brackish,xiphosura,ephydridae,terr_coleopera,fresh_coleoptera))
+
+#Select edges to paint
+#227,239,244,216,176,157,81,83,260,253,158,131,23,16,397,275,267,191,145,147,130,12,11,13,268,710,223,243,241
+
+#For labels
+ggplot(sp_tree3, aes(x, y, color=group)) + geom_tree(size=1) + theme_tree()+ geom_label(aes(label=node, hjust=-.3), label.size=0.0001)+geom_tiplab(offset=30)
+
+#Color
+p<-ggtree(sp_tree3, aes(color=group),layout="circular", branch.length="none",size=1) + theme_tree()+
+  scale_color_manual(name="Habitat",values=c("#005f73","#BB3E03","#BB3E03","#BB3E03","#BB3E03","#94d2bd","#BB3E03","#BB3E03","#BB3E03","#BB3E03","#BB3E03","#94d2bd","#94d2bd","#94d2bd","#94d2bd","#94d2bd","#94d2bd","#94d2bd","#94d2bd","#94d2bd","#0a9396","#005f73","#005f73","#BB3E03","#94d2bd"))+ #Marine, terrestrial, freshwater, brackish
+  theme(legend.position="none")+new_scale_color()
+
+#Dataframe for tip colors
+habitat_data<-read.table("/home/metazomics/AQPs/Poisson_files/aqps_all_phyla_no_intertidal.txt",header=TRUE,sep="\t") %>% mutate(Color=factor(levels=c("#0a9396","#94d2bd","#005f73","#BB3E03"), case_when(Habitat=="Terrestrial"~"#BB3E03",Habitat=="Marine"~"#005f73", Habitat=="Freshwater"~"#94d2bd",Habitat=="Brackish"~"#0a9396")))# %>% transmute(Species,Habitat)
+
+p %<+% habitat_data + geom_tippoint(aes(color=as.factor(Habitat)), size=1)+scale_color_manual(name="Habitat",values=levels(habitat_data$Color))
+```
+
+
+
+## Figure 1: Timetree (Cont. Poisson figure)
+```{r Figure 1a}
+#Interesting nodes
+chelicerata<-MRCA(sp_tree,c("PLIT1","MGUT1"))
+arachnida<-MRCA(sp_tree,c("LDEL1","MGUT1"))
+arthropoda<-MRCA(sp_tree,c("PLIT1","DMEL1"))
+pancrustacea<-MRCA(sp_tree,c("HINC1","DMEL1"))
+myriapoda<-MRCA(sp_tree,c("AORN1","HBRE1"))
+mollusca<-MRCA(sp_tree,c("LRUG1","ACHE1"))
+annelida<-MRCA(sp_tree,c("Eisenia_andrei","Ophryotrocha_diadema"))
+vertebrata<-MRCA(sp_tree,c("Leucoraja_erinacea","Homo_sapiens"))
+tetrapoda<-MRCA(sp_tree,c("Leptobrachium_leishanense","Homo_sapiens"))
+clitellata<-MRCA(sp_tree,c("Capitella_teleta","Eisenia_andrei"))
+gastropoda<-MRCA(sp_tree,c("CSQU1","ACHE1"))
+scaphopoda<-MRCA(sp_tree,c("GTOL1","AENT2"))
+bivalvia<-MRCA(sp_tree,c("MHON1","NTUM1"))
+solenogastres<-MRCA(sp_tree,c("HAEG1","ACRA1"))
+caudofoveata<-MRCA(sp_tree,c("CNIT1","SVEN1"))
+cephalopoda<-MRCA(sp_tree,c("CCAL1","NPOM2"))
+polyplacophora<-MRCA(sp_tree,c("ACRI1","LRUG1"))
+monoplacophora<-"LHAY1"
+onychophora<-MRCA(sp_tree,c("EROW2","ETOT1"))
+remipedia_brackish<-MRCA(sp_tree,c("PAPL1","XTUL1"))
+hirudinida<-MRCA(sp_tree,c("Helobdella_robusta","Hirudo_medicinalis"))
+coleoptera<-MRCA(sp_tree,c("AINS1","PPYR3"))
+diptera<-MRCA(sp_tree,c("AAEG1","DMEL1"))
+ter_diptera<-MRCA(sp_tree,c("BCOP1","DMEL1"))
+megaloptera<-MRCA(sp_tree,c("CSIM1","CCOR1"))
+paleoptera<-MRCA(sp_tree,c("CDIP1","ISEN1")) #odonata+ephemenoptera
+branchiopoda<-MRCA(sp_tree,c("DMAG1","LYNC1"))
+crassiclitellata<-MRCA(sp_tree,c("Amynthas_gracilis","Eisenia_andrei"))
+ellobioidae<-MRCA(sp_tree,c("CARY1","PPAC1"))
+stylommatophora<-MRCA(sp_tree,c("ACHE1","DRET1"))
+terr_coleopera<-MRCA(sp_tree,c("PPYR3","TCAS1"))
+fresh_coleoptera<-MRCA(sp_tree,c("AINS1","CJAP1"))
+hexapoda<-MRCA(sp_tree,c("ACER1","DMEL1"))
+isopoda<-MRCA(sp_tree,c("ANAS1","AVUL2"))
+ephydridae<-MRCA(sp_tree,c("SSTA1","EHIA1"))
+xiphosura<-MRCA(sp_tree,c("LPOL1","TTRI1"))
+ter_crab<-"GLAT1"
+ter_amph<-"TRLO1"
+fresh_gastropoda1<-MRCA(sp_tree,c("LSTA1","BGLA1"))
+fresh_gastropoda2<-MRCA(sp_tree,c("LNYA1","PCAN1"))
+fresh_bivalvia<-MRCA(sp_tree,c("MMAR1","DROS1"))
+
+
+#Group nodes for collapsing
+sp_tree2<-groupClade(sp_tree, c(chelicerata,myriapoda,pancrustacea,annelida,clitellata,gastropoda,bivalvia,scaphopoda,cephalopoda,polyplacophora,caudofoveata,solenogastres,vertebrata,onychophora))
+
+#Add some silhouettes from phylopic
+#d<-ggimage::phylopic_uid(sp_tree2$tip.label)
+
+#Color-blindness friendly
+PairedColor12Steps = c("#FFBF7F", "#FF7F00", "#FFFF99", "#FFFF32", "#06D6A0", "#32FF00", "#A5EDFF", "#19B2FF", "#CCBFFF", "#654CFF", "#FF99BF", "#E51932","#ff6db6") ##B2FF8C estaba en lugar de #06D6A0
+
+# get the periods object from deeptime
+periods_cust <- periods
+# add alternating colors to the data frame
+periods_cust$box_fill <- alpha(periods_cust$color, alpha=0.2) #c("grey90", "white")
+
+#Add age intervals from different NEXUS file independently
+sp_tree_intervals<-sp_tree2 %>% as.tibble %>% mutate(range=lapply(node, function(x) if (x==MRCA(sp_tree,c(arthropoda,onychophora))) {c(636.1,668.7)} else if (x==onychophora) {c(294.368,456.827)} else if (x==arthropoda) {c(634.1, 665.5)} else if (x==pancrustacea) {c(585.6, 620)} else if (x==myriapoda) {c(618.7, 646.2)} else if (x==MRCA(sp_tree,c(pancrustacea,myriapoda))) {c(585.6, 620)} else if (x==chelicerata) {c(591.2, 634)}  else if (x==vertebrata) {c(438.96,465.40)} else if (x==tetrapoda) {c(333.07,351.35)} else if (x==MRCA(sp_tree, c(mollusca,annelida))) {c(545,681.5)} else if (x==MRCA(sp_tree, c(mollusca,arthropoda))) {c(560,670.1)} else if (x==MRCA(sp_tree, c(vertebrata,arthropoda))) {c(630,830)} else if (x==gastropoda) {c(473.158, 484.934)} else if (x==bivalvia) {c(477.235, 489.546)} else if (x==solenogastres) {c(240.843, 282.915)} else if (x==caudofoveata) {c(107.08, 150.823)} else if (x==scaphopoda) {c(344.904, 366.162)} else if (x==polyplacophora) {c(340.504, 385.98)} else if (x==cephalopoda) {c(406.296, 438.94)} else if (x==annelida) {c(513.848, 647.407)} else if (x==clitellata) {c(391.503, 508.09)} else if (x==mollusca) {c(556.732, 560.309)} else if (x==MRCA(sp_tree, c(solenogastres,caudofoveata))) {c(451.89, 478.308)} else if (x==MRCA(sp_tree, c(caudofoveata,polyplacophora))) {c(499.533, 517.247)} else if (x==MRCA(sp_tree, c(polyplacophora,gastropoda))) {c(556.732, 560.309)} else if (x==MRCA(sp_tree, c("LHYA1","NPOM2"))) {c(542.053, 547.5)} else if (x==MRCA(sp_tree, c(cephalopoda,bivalvia))) {c(536.881, 541.854)} else if (x==MRCA(sp_tree, c(bivalvia,scaphopoda))) {c(522.462, 527.536)} else if (x==MRCA(sp_tree, c(scaphopoda,gastropoda))) {c(512.321, 520.119)} )) %>% as.treedata
+
+#p1<-ggplot(sp_tree2, aes(x, y)) + geom_tree(size=0.5, alpha=0.5) + theme_tree2() + theme(axis.line.x=element_blank(), axis.text.x=element_text(color="black", size=8))# + geom_label(aes(label=node, hjust=-.3)) 
+p1<-ggtree(sp_tree_intervals, mapping=aes(x,y))+theme_tree2() + theme(axis.line.x=element_blank(), axis.text.x=element_text(color="black", size=8))
+
+#Invert tree (time x axis) and add geological timeline
+p2_collapsed<- revts(p1)%>% collapse(node=solenogastres, "max", fill="#535353")%>% collapse(node=caudofoveata, "max", fill="#535353")%>% collapse(node=polyplacophora, "max", fill="#535353")%>% collapse(node=cephalopoda, "max", fill="#535353")%>% collapse(node=scaphopoda, "max", fill="#535353")%>% collapse(node=bivalvia, "max", fill="#535353")%>% collapse(node=gastropoda, "max", fill="#535353")%>% collapse(node=clitellata, "max", fill="#535353")%>%  collapse(node=pancrustacea, "max", fill="#535353")%>% collapse(node=myriapoda, "max", fill="#535353")%>% collapse(node=chelicerata, "max", fill="#535353")%>% collapse(node=onychophora, "max", fill="#535353")%>% collapse(node=tetrapoda, "max", fill="#535353")+
+  #geom_hilight(mapping=aes(subset=node %in% c(466,452),fill = group), #10 groups max 771,727,593,468,547,530,589,520,508
+                        #type = "gradient", gradient.direction = 'tr', #Cannot use gradient and coord_geo same time (nor working when changing coordinates of plot)
+                        #alpha = .8)+
+  #geom_hilight(mapping=aes(subset=node %in% c(494,497,452),fill = group), #10 groups max
+                        #type = "gradient", gradient.direction = 'tr', #Cannot use gradient and coord_geo same time (nor working when changing coordinates of plot)
+                        #alpha = .8)+
+  scale_x_continuous(labels=abs, breaks=c(-720,-635,-540,-485,-420,-358,-298,-250,-200,-145,-65,0)) +
+  coord_geo(dat=list("periods","eras", "eons"), size="auto", xlim=c(-720,350), neg=TRUE, pos=list("bottom","bottom","bottom"), abbrv=list(TRUE,FALSE,FALSE), expand=TRUE, height=unit(1,"line")) + labs(x="Time (Mya)") +
+  geom_rect(data = periods_cust, aes(xmin = -min_age, xmax = -max_age, ymin = -Inf, ymax = Inf),
+              fill = periods_cust$box_fill, inherit.aes = FALSE)+
+  theme(legend.position="none")+
+  geom_cladelabel(node=arthropoda, label="Arthropoda", offset=600, offset.text=5, color="#EF476F", align=FALSE)+
+  geom_cladelabel(node=onychophora, label="Onychophora", offset=250, offset.text=5, color="#6a329f", align=FALSE)+
+  geom_cladelabel(node=mollusca, label="Mollusca", offset=20, offset.text=5, color="#3943B7", align=FALSE)+
+  geom_cladelabel(node=annelida, label="Annelida", offset=20, offset.text=5, color="#FFD166", align=FALSE)+
+  geom_cladelabel(node=vertebrata, label="Vertebrata", offset=10, offset.text=5, color="#06D6A0", align=FALSE)+
+  geom_cladelabel(node=chelicerata, label="Chelicerata", offset=700, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=3.5)+
+  geom_cladelabel(node=myriapoda, label="Myriapoda", offset=600, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=3.5)+
+  geom_cladelabel(node=pancrustacea, label="Pancrustacea", offset=700, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=3.5)+
+  geom_cladelabel(node=annelida, label="Polychaeta", offset=20, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=clitellata, label="Clitellata", offset=500, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=gastropoda, label="Gastropoda", offset=500, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=bivalvia, label="Bivalvia", offset=500, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=scaphopoda, label="Scaphopoda", offset=400, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=cephalopoda, label="Cephalopoda", offset=400, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=monoplacophora, label="Monoplacophora", offset=10, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=polyplacophora, label="Polyplacophora", offset=400, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=caudofoveata, label="Caudofoveata", offset=200, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=solenogastres, label="Soleongastres", offset=250, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  scale_fill_manual(values=PairedColor12Steps, guide="none")+
+  #geom_range(range='length_0.95_HPD', color="blue", size=3, alpha=.3)+
+  theme(axis.title.x=element_text(hjust=0.35))+
+  new_scale_fill()+geom_range(range="range", color="black", size=2, alpha=.3)
+
+#%<+% d + geom_tiplab(aes(image=uid, colour=group), geom="phylopic", offset=10)
+
+# put the rectangles behind the tree
+p2_collapsed$layers<-rev(p2_collapsed$layers)
+
+#p2%<+% habitat_data + geom_tippoint(aes(color=as.factor(Habitat)), size=1)+scale_color_manual(name="Habitat",values=levels(habitat_data$Color))
+
+pdf("/home/metazomics/AQPs/Figures/species_tree_collapse.pdf", width=6,height=6)
+
+p2_collapsed
+
+dev.off()
+
+#########################
+#Tree without collapsing#
+#########################
+
+age_intervals<-data.frame(length_0.95_HPD=c("[&95%={6.361, 6.687}]"))
+rownames(age_intervals)<-c(MRCA(sp_tree,c(onychophora,arthropoda)))
+
+sp_tree3<-groupClade(sp_tree, c(arachnida,myriapoda,isopoda,hexapoda,diptera,ter_diptera,stylommatophora,ellobioidae,crassiclitellata,tetrapoda,branchiopoda,paleoptera,megaloptera,coleoptera,fresh_gastropoda1,fresh_gastropoda2,fresh_bivalvia,hirudinida,remipedia_brackish,xiphosura,ephydridae,terr_coleopera,fresh_coleoptera,onychophora))
+
+p1b<-ggtree(sp_tree3, mapping=aes(x,y, color=group))+theme_tree2() + scale_color_manual(name="Habitat",values=c("#005f73","#BB3E03","#BB3E03","#BB3E03","#BB3E03","#94d2bd","#BB3E03","#BB3E03","#BB3E03","#BB3E03","#BB3E03","#94d2bd","#94d2bd","#94d2bd","#94d2bd","#94d2bd","#94d2bd","#94d2bd","#94d2bd","#0a9396","#005f73","#005f73","#BB3E03","#94d2bd","#BB3E03"))+ theme(axis.line.x=element_blank(), axis.text.x=element_text(color="black", size=8),legend.position="none")+
+     geom_tiplab(aes(label=label, subset=label %in% c("GLAT1","TRLO1")), color="#BB3E03")+
+    new_scale_color()
+
+p2b<- revts(p1b)+
+  scale_x_continuous(labels=abs, breaks=c(-720,-635,-540,-485,-420,-358,-298,-250,-200,-145,-65,0)) +
+  coord_geo(dat=list("periods","eras", "eons"), size="auto", xlim=c(-720,350), neg=TRUE, pos=list("bottom","bottom","bottom"), abbrv=list(TRUE,FALSE,FALSE), expand=TRUE, height=unit(1,"line")) + labs(x="Time (Mya)") +
+  geom_rect(data = periods_cust, aes(xmin = -min_age, xmax = -max_age, ymin = -Inf, ymax = Inf),
+              fill = periods_cust$box_fill, inherit.aes = FALSE)+
+  theme(legend.position="none")+
+  geom_cladelabel(node=arthropoda, label="Arthropoda", offset=170, offset.text=5, color="#EF476F", align=FALSE)+
+  geom_cladelabel(node=onychophora, label="Onychophora", offset=170, offset.text=5, color="#6a329f", align=FALSE)+
+  geom_cladelabel(node=mollusca, label="Mollusca", offset=170, offset.text=5, color="#3943B7", align=FALSE)+
+  geom_cladelabel(node=annelida, label="Annelida", offset=170, offset.text=5, color="#FFD166", align=FALSE)+
+  geom_cladelabel(node=vertebrata, label="Vertebrata", offset=170, offset.text=5, color="#06D6A0", align=FALSE)+
+  geom_cladelabel(node=chelicerata, label="Chelicerata", offset=20, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=3.5)+
+  geom_cladelabel(node=myriapoda, label="Myriapoda", offset=20, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=3.5)+
+  geom_cladelabel(node=pancrustacea, label="Pancrustacea", offset=20, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=3.5)+
+  geom_cladelabel(node=annelida, label="Polychaeta", offset=20, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=clitellata, label="Clitellata", offset=20, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=gastropoda, label="Gastropoda", offset=20, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=bivalvia, label="Bivalvia", offset=20, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=scaphopoda, label="Scaphopoda", offset=20, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=cephalopoda, label="Cephalopoda", offset=20, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=monoplacophora, label="Monoplacophora", offset=20, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=polyplacophora, label="Polyplacophora", offset=20, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=caudofoveata, label="Caudofoveata", offset=20, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  geom_cladelabel(node=solenogastres, label="Soleongastres", offset=20, offset.text=5, color="#3D3D3D", align=FALSE, fontsize=2)+
+  scale_fill_manual(values=PairedColor12Steps, guide="none")+
+  theme(axis.title.x=element_text(hjust=0.35))+
+  new_scale_fill()
+
+p2b$layers<-rev(p2b$layers)
+
+#p2b%<+%age_intervals+geom_range(aes(range=length_0.95_HPD), color="blue", size=3, alpha=.3)
+
+#Save tree
+pdf("/home/metazomics/AQPs/Figures/species_tree.pdf", width=6,height=6)
+habitat_data2<-column_to_rownames(habitat_data,var="Species") %>% transmute(Habitat)
+gheatmap(p2b, habitat_data2, offset=-8, width=0.02, colnames_angle=45, font.size=2, colnames_position="top", color="#BB3E03",colnames_offset_y=11,colnames_offset_x=5)+scale_fill_manual(values=levels(habitat_data$Color),name="Habitat")+
+  theme(legend.position=c(0.85,-0.05), legend.direction = "horizontal",legend.title.align=0.5, legend.key.size=unit(0.1,"cm"), legend.key.width=unit(0.3,"cm"))+guides(fill=guide_legend(title.position="top",nrow=2))
+dev.off()
+```
+```{r alluvial plot}
+#Function to order data to match order of tips (from evobiR package)
+ReorderData <- function(tree, data, taxa.names="row names"){
+  new.data <- data
+  if(is.vector(data)){
+    for(i in 1:length(tree$tip.label)){
+      new.data[i] <- data[which(names(data) == tree$tip.label[i])]
+      names(new.data)[i] <- names(data)[which(names(data) == tree$tip.label[i])]
+    }
+  }
+  if(is.data.frame(data) || is.matrix(data)){
+    if(taxa.names == "row names"){
+      row.names(new.data) <- 1:length(tree$tip.label)
+      for(i in 1:length(tree$tip.label)){
+        new.data[i,] <- data[which(row.names(data) == tree$tip.label[i]),]
+        row.names(new.data)[i] <- row.names(data)[which(row.names(data) == tree$tip.label[i])]
+      }
+    }
+    if(is.numeric(taxa.names)){
+      for(i in 1:length(tree$tip.label)){
+        new.data[i,] <- data[which(data[,taxa.names] == tree$tip.label[i]),]
+      }
+    }
+  }
+  return(new.data)  
+}
+
+#Need to add factors to work. Level order must be manually stablished or it orders the levels alphabetically (which we do not want)
+#Function to reorder data according to tree is not working.
+ordered_species<-read.table("/home/metazomics/AQPs/species_sorted_by_sp_tree.txt") %>% as.data.frame %>% rename(Species=V1) #Order was obtained from iTOL ("Copy leaf labels" by clicking on tree root) and replacing spaces with _
+
+#sp_hab<-ReorderData(sp_tree, habitat_data, taxa.names="Species") %>% transmute(Phylum,Species,Habitat)
+sp_hab<-ordered_species%>% inner_join(habitat_data, by="Species") %>% transmute(Phylum,Species,Habitat)
+sp_hab$Height<-rep(50,454)#as.numeric(rev(row.names(sp_hab)))
+lode_ord<-transmute(sp_hab, Order=case_when(Phylum=="Arthropoda"~1, Phylum=="Onychophora"~2, Phylum=="Mollusca"~3, Phylum=="Annelida"~4, Phylum=="Chordata"~5))
+sp_hab$Phylum<-factor(sp_hab$Phylum, levels=c("Arthropoda","Onychophora","Mollusca","Annelida","Chordata"))
+sp_hab$Species<-factor(sp_hab$Species, levels=sp_hab$Species)
+
+pdf("/home/metazomics/AQPs/Figures/alluvial_mess.pdf", width=6,height=12)
+#Alluvial plot. Solution for considering original order in dataset is to use Species as axis instead of phylum (otherwise, it reorders data)
+ggplot(sp_hab, aes(y=Height, axis1=Species, axis2=Habitat, axis3=Phylum))+ #axis2=Phylum, axis3=Habitat for phyla in the middle of alluvial plot
+  geom_alluvium(aes(fill=Habitat),width=1/4, alpha=0.8)+
+  geom_stratum(width=1/4, fill="black", color="grey")+
+  #geom_label(stat="stratum", aes(label=after_stat(stratum)))+
+  scale_fill_manual(values=c("#0a9396","#94d2bd","#005f73","#BB3E03"),name="Habitat")+
+  scale_x_discrete(limits=c("Species","Phylum","Habitat"), expand=c(0.05,0.05))+
+  theme_void()
+dev.off()
+```
+
+
+## Figure 2: Poisson
+
+```{r data_figure1}
+poisson_results_arth_mar<-read.table("/home/metazomics/AQPs/Poisson_files/Results_Arthropoda_marine_vs_non.csv",header=TRUE,sep=",") %>% mutate(Phylum="Arthropoda", Sgn = sign(Marine - Non.marine), Signf=factor(case_when(P.val<0.05~1, P.val>=0.05~0.5))) %>% rename(AQP_type=X, Non.Marine=Non.marine)
+poisson_results_arth_terr<-read.table("/home/metazomics/AQPs/Poisson_files/Results_Arthropoda_terrestrial_vs_non.csv",header=TRUE,sep=",") %>% mutate(Phylum="Arthropoda", Sgn = sign(Terrestrial - Non.terrestrial), Signf=factor(case_when(P.val<0.05~1, P.val>=0.05~0.5))) %>% rename(AQP_type=X, Non.Terrestrial=Non.terrestrial)
+poisson_results_mol_mar<-read.table("/home/metazomics/AQPs/Poisson_files/Results_Mollusca_marine_vs_non.csv",header=TRUE,sep=",") %>% mutate(Phylum="Mollusca", Sgn = sign(Marine - Non.Marine), Signf=factor(case_when(P.val<0.05~1, P.val>=0.05~0.5))) %>% rename(AQP_type=X)
+poisson_results_mol_terr<-read.table("/home/metazomics/AQPs/Poisson_files/Results_Mollusca_terrestrial_vs_non.csv",header=TRUE,sep=",") %>% mutate(Phylum="Mollusca", Sgn = sign(Terrestrial - Non.Terrestrial), Signf=factor(case_when(P.val<0.05~1, P.val>=0.05~0.5))) %>% rename(AQP_type=X)
+poisson_results_all_mar<-read.table("/home/metazomics/AQPs/Poisson_files/All_phyla_results_marine_vs_non.csv",header=TRUE,sep=",") %>% mutate(Phylum="All", Sgn = sign(Marine - Non.Marine), Signf=factor(case_when(P.val<0.05~1, P.val>=0.05~0.5))) %>% rename(AQP_type=X)
+poisson_results_all_terr<-read.table("/home/metazomics/AQPs/Poisson_files/All_phyla_results_terrestrial_vs_non.csv",header=TRUE,sep=",") %>% mutate(Phylum="All", Sgn = sign(Terrestrial - Non.terrestrial), Signf=factor(case_when(P.val<0.05~1, P.val>=0.05~0.5))) %>% rename(AQP_type=X, Non.Terrestrial=Non.terrestrial)
+poisson_results_mar<-rbind(poisson_results_all_mar,poisson_results_arth_mar,poisson_results_mol_mar) %>% mutate(Comparison="Marine", Sgn = sign(Marine - Non.Marine), Signf=factor(case_when(P.val<0.05~1, P.val>=0.05~0.5)))
+poisson_results_terr<-rbind(poisson_results_all_terr,poisson_results_arth_terr,poisson_results_mol_terr) %>% mutate(Comparison="Terrestrial", Sgn = sign(Terrestrial - Non.Terrestrial), Signf=factor(case_when(P.val<0.05~1, P.val>=0.05~0.5)))
+```
+
+```{r prepare data in long format}
+poisson_results_terr_long<-poisson_results_terr %>% mutate(Sgn=NULL) %>% reshape2::melt(id.vars=c("AQP_type","Phylum","Comparison","P.val","Signf"),variable.name="Comparison_value")
+poisson_results_mar_long<-poisson_results_mar %>% mutate(Sgn=NULL) %>% reshape2::melt(id.vars=c("AQP_type","Phylum","Comparison","P.val","Signf"),variable.name="Comparison_value")
+all_poisson_results<-rbind(poisson_results_mar_long,poisson_results_terr_long) %>% mutate(combined_vars=paste(AQP_type,Phylum, sep="_"))#,mod_value=ifelse(Comparison=="Marine", -value, value))
+```
+
+```{r modify data}
+all_poisson_results$Comparison_value<-as.factor(all_poisson_results$Comparison_value)
+all_poisson_results$AQP_type<-as.factor(all_poisson_results$AQP_type)
+all_poisson_results <-all_poisson_results%>% mutate(all_combined_vars=paste(AQP_type,Phylum,Comparison_value, sep="_"))
+all_poisson_results$all_combined_vars<-factor(all_poisson_results$all_combined_vars, levels=c("AllAQP_All_Non.Terrestrial","AllAQP_All_Terrestrial","AllAQP_All_Non.Marine","AllAQP_All_Marine","AllAQP_Mollusca_Non.Terrestrial","AllAQP_Mollusca_Terrestrial","AllAQP_Mollusca_Non.Marine","AllAQP_Mollusca_Marine","AllAQP_Arthropoda_Non.Terrestrial","AllAQP_Arthropoda_Terrestrial","AllAQP_Arthropoda_Non.Marine","AllAQP_Arthropoda_Marine","AQP11_All_Non.Terrestrial","AQP11_All_Terrestrial","AQP11_All_Non.Marine","AQP11_All_Marine","AQP11_Mollusca_Non.Terrestrial","AQP11_Mollusca_Terrestrial","AQP11_Mollusca_Non.Marine","AQP11_Mollusca_Marine","AQP11_Arthropoda_Non.Terrestrial","AQP11_Arthropoda_Terrestrial","AQP11_Arthropoda_Non.Marine","AQP11_Arthropoda_Marine","AQP8_All_Non.Terrestrial","AQP8_All_Terrestrial","AQP8_All_Non.Marine","AQP8_All_Marine","AQP8_Mollusca_Non.Terrestrial","AQP8_Mollusca_Terrestrial","AQP8_Mollusca_Non.Marine","AQP8_Mollusca_Marine","AQP3_All_Non.Terrestrial","AQP3_All_Terrestrial","AQP3_All_Non.Marine","AQP3_All_Marine","AQP3_Mollusca_Non.Terrestrial","AQP3_Mollusca_Terrestrial","AQP3_Mollusca_Non.Marine","AQP3_Mollusca_Marine","AQP3_Arthropoda_Non.Terrestrial","AQP3_Arthropoda_Terrestrial","AQP3_Arthropoda_Non.Marine","AQP3_Arthropoda_Marine","AQP1_All_Non.Terrestrial","AQP1_All_Terrestrial","AQP1_All_Non.Marine","AQP1_All_Marine","AQP1_Mollusca_Non.Terrestrial","AQP1_Mollusca_Terrestrial","AQP1_Mollusca_Non.Marine","AQP1_Mollusca_Marine","AQP1_Arthropoda_Non.Terrestrial","AQP1_Arthropoda_Terrestrial","AQP1_Arthropoda_Non.Marine","AQP1_Arthropoda_Marine"))
+all_poisson_results <-all_poisson_results%>% mutate(some_combined_vars=paste(AQP_type,Comparison_value, sep="_"))
+all_poisson_results$some_combined_vars<-factor(all_poisson_results$some_combined_vars, levels=c("AllAQP_Non.Terrestrial","AllAQP_Terrestrial","AllAQP_Non.Marine","AllAQP_Marine","AQP11_Non.Terrestrial","AQP11_Terrestrial","AQP11_Non.Marine","AQP11_Marine","AQP8_Non.Terrestrial","AQP8_Terrestrial","AQP8_Non.Marine","AQP8_Marine","AQP3_Non.Terrestrial","AQP3_Terrestrial","AQP3_Non.Marine","AQP3_Marine","AQP1_Non.Terrestrial","AQP1_Terrestrial","AQP1_Non.Marine","AQP1_Marine"))
+
+all_poisson_results <-all_poisson_results%>% mutate(axis_val=case_when(Comparison_value=="Marine"~"Pos_comp", Comparison_value=="Terrestrial" ~ "Pos_comp", Comparison_value=="Non.Marine"~"Neg_comp",Comparison_value=="Non.Terrestrial"~"Neg_comp"), mod_value=ifelse(axis_val=="Pos_comp", -value, value), for_number=ifelse(mod_value<0, -1, 1/3))
+all_poisson_results <-all_poisson_results%>% mutate(simpl_combined_vars=paste(AQP_type,Comparison, sep="_"))
+all_poisson_results$simpl_combined_vars<-factor(all_poisson_results$simpl_combined_vars, levels=c("AllAQP_Marine","AllAQP_Terrestrial","AQP11_Marine","AQP11_Terrestrial","AQP8_Marine","AQP8_Terrestrial","AQP3_Marine","AQP3_Terrestrial","AQP1_Marine","AQP1_Terrestrial"))
+all_poisson_results$Comparison_value<-factor(all_poisson_results$Comparison_value, levels=c("Marine","Non.Marine","Terrestrial","Non.Terrestrial"))
+```
+
+```{r figure2a, echo=FALSE}
+#Remove AllAQP AQP_type from dataset (largest scale of all data)
+not_all_all_poisson_results<-filter(all_poisson_results, AQP_type!="AllAQP")
+
+#Plot
+f2a<-ggdotchart(not_all_all_poisson_results, x = "simpl_combined_vars", y = "mod_value",
+           color = "white",                                # Color by groups
+           palette = c("#005f73", "#ffb703", "#bb3e03","#0a9396"), # Custom color palette
+           dot.size = 0,                                 # Large dot size
+           sorting="none",
+           ylab="Mean No. Aquaporins",
+           xlab="",
+           label = format(round(not_all_all_poisson_results$value,3),nsmall=3),                        # Add values as dot labels
+           font.label = list(color = "black", size = 8, 
+                             vjust = 0.5, hjust=-1.5*not_all_all_poisson_results$for_number, face="bold", alpha="Signf"),               # Adjust label parameters
+           rotate=TRUE,
+           add="segments",
+           add.params = list(color = "lightgray", size = 2, alpha="Signf"), # Change segment color and size
+           ggtheme = theme_pubr()                        # ggplot2 theme
+           )+
+  geom_hline(yintercept = 0, linetype = 2, color = "black", size=1)+
+  geom_exec(geom_point, data=not_all_all_poisson_results, color="Comparison_value",size=5)+
+  scale_alpha_discrete(range=c(0.4,1), guide="none")+
+  scale_y_continuous(expand = c(0.5, 0), labels=abs)+ #scale_y_continuous(limits=c(-8.2,8.2),expand = c(0.4, 0), breaks=seq(-8,8,8), labels=c(8,0,8))
+  labs(tag="AQP1")+
+  theme(legend.title=element_blank(),legend.margin = margin(t = 0, r = 10, b = 0, l = -10, unit = "pt"), strip.background = element_blank(), strip.text=element_text(size=12, face="bold"),plot.tag.position=c(0.03,0.78), plot.tag = element_text(size=12, face="bold", color="#3D3D3D"),axis.line.y = element_blank(), axis.text.y=element_text(color="white",size=3),axis.ticks=element_blank()) + #axis.line.y = element_line(linetype="longdash", size=2.85, color="#3D3D3D")
+annotate("segment",x=Inf,xend=Inf,y=-Inf,yend=Inf,color="#3D3D3D",lwd=2)+
+  facet_grid(~Phylum, scales="free")
+```
+
+```{r figure2b, echo=FALSE}
+#Keep only AllAQP AQP_type from dataset (largest scale of all data)
+all_all_poisson_results<-filter(all_poisson_results, AQP_type=="AllAQP")
+#Add dummy variable for plotting
+all_all_poisson_results <-all_all_poisson_results%>% mutate(Phylum_comparison=paste(Phylum,Comparison, sep="_"))
+all_all_poisson_results$Phylum_comparison<-factor(all_all_poisson_results$Phylum_comparison, levels=c("All_Marine","All_Terrestrial","Mollusca_Marine","Mollusca_Terrestrial","Arthropoda_Marine","Arthropoda_Terrestrial"))
+
+#Plot
+f2b<-ggdotchart(all_all_poisson_results, x = "Phylum_comparison", y = "mod_value",
+           color = "white",                                # Color by groups
+           palette = c("#005f73", "#ffb703", "#bb3e03","#0a9396"), # Custom color palette
+           dot.size = 0,                                 # Large dot size
+           sorting="none",
+           ylab="Mean No. Aquaporins",
+           xlab="",
+           label = format(round(all_all_poisson_results$value,3),nsmall=3),                        # Add values as dot labels
+           font.label = list(color = "black", size = 8, 
+                             vjust = 0.5, hjust=-1.5*all_all_poisson_results$for_number, face="bold", alpha="Signf"),               # Adjust label parameters
+           rotate=TRUE,
+           add="segments",
+           add.params = list(color = "lightgray", size = 2, alpha="Signf"), # Change segment color and size
+           ggtheme = theme_pubr()                        # ggplot2 theme
+           )+
+  geom_hline(yintercept = 0, linetype = 2, color = "black", size=1)+
+  geom_exec(geom_point, data=all_all_poisson_results, color="Comparison_value",size=5)+
+  scale_alpha_discrete(range=c(0.4,1), guide="none")+
+  scale_y_continuous(expand = c(0.2, 0), labels=abs)+ #scale_y_continuous(limits=c(-8.2,8.2),expand = c(0.4, 0), breaks=seq(-8,8,8), labels=c(8,0,8))
+  labs(tag="Arthropoda")+
+  theme(legend.position =  "none", strip.background = element_blank(), strip.text=element_text(size=12, face="bold", hjust=0.4),plot.tag.position=c(0.09,0.77), plot.tag = element_text(size=12, face="bold", color="#3D3D3D"),axis.line.y = element_blank(), axis.text.y=element_text(color="white", size=6),axis.ticks=element_blank()) + #axis.line.y = element_line(linetype="longdash", size=2.85, color="#3D3D3D")
+annotate("segment",x=Inf,xend=Inf,y=-Inf,yend=Inf,color="#3D3D3D",lwd=2)+
+  facet_grid(~AQP_type, scales="free")
+```
+
+```{r figure2, echo=FALSE}
+#Combine plots
+f2<-ggarrange(f2a,f2b,nrow=1,common.legend=TRUE, legend="bottom", labels=c("B","C"), widths=c(1,0.65))
+
+#Open pdf
+pdf("/home/metazomics/AQPs/Figures/figure2_poisson.pdf", width=14,height=3)
+
+#Add plot to pdf
+f2
+
+###Add other elements
+##f2a
+#Add AQP names left
+grid.text(expression(bold("AQP3")),x=0.02,y=0.63, gp=gpar(col="#3D3D3D",fontsize=12,face="bold"))
+grid.text(expression(bold("AQP8")),x=0.02,y=0.49, gp=gpar(col="#3D3D3D",fontsize=12,face="bold"))
+grid.text(expression(bold("AQP11")),x=0.02,y=0.34, gp=gpar(col="#3D3D3D",fontsize=12,face="bold"))
+#Add vertical lines
+grid.segments(x0=0.05,x1=0.05,y0=0.78+0.05,y1=0.78-0.05,gp=gpar(col="#3D3D3D",lwd=5))
+grid.segments(x0=0.05,x1=0.05,y0=0.63+0.05,y1=0.63-0.05,gp=gpar(col="#3D3D3D",lwd=5))
+grid.segments(x0=0.05,x1=0.05,y0=0.49+0.05,y1=0.49-0.05,gp=gpar(col="#3D3D3D",lwd=5))
+grid.segments(x0=0.05,x1=0.05,y0=0.34+0.05,y1=0.34-0.05,gp=gpar(col="#3D3D3D",lwd=5))
+#Add asterisks to significant values
+grid.text(expression(bold("*")),x=0.587,y=0.75, gp=gpar(col="black",fontsize=12,face="bold"))
+#grid.text(expression(bold("*")),x=0.195,y=0.6669, gp=gpar(col="black",fontsize=12,face="bold"))
+#grid.text(expression(bold("*")),x=0.385,y=0.6669, gp=gpar(col="black",fontsize=12,face="bold"))
+grid.text(expression(bold("*")),x=0.199,y=0.595, gp=gpar(col="black",fontsize=12,face="bold"))
+grid.text(expression(bold("*")),x=0.374,y=0.36, gp=gpar(col="black",fontsize=12,face="bold"))
+#grid.text(expression(bold("*")),x=0.37,y=0.29, gp=gpar(col="black",fontsize=12,face="bold"))
+grid.text(expression(bold("*")),x=0.56,y=0.448, gp=gpar(col="black",fontsize=12,face="bold"))
+# 
+##f2b
+#Add AQP names left
+grid.text(expression(bold("Mollusca")),x=0.65,y=0.55, gp=gpar(col="#3D3D3D",fontsize=12,face="bold"))
+grid.text(expression(bold("All Phyla")),x=0.65,y=0.35, gp=gpar(col="#3D3D3D",fontsize=12,face="bold"))
+#Add vertical lines
+grid.segments(x0=0.69,x1=0.69,y0=0.76+0.06,y1=0.76-0.06,gp=gpar(col="#3D3D3D",lwd=5))
+grid.segments(x0=0.69,x1=0.69,y0=0.55+0.06,y1=0.55-0.06,gp=gpar(col="#3D3D3D",lwd=5))
+grid.segments(x0=0.69,x1=0.69,y0=0.35+0.06,y1=0.35-0.06,gp=gpar(col="#3D3D3D",lwd=5))
+#Add asterisks to significant values
+grid.text(expression(bold("*")),x=0.99,y=0.5, gp=gpar(col="black",fontsize=12,face="bold"))
+
+## Stop writing to the PDF file
+dev.off()
+```
+
+
+
+
+
+ 

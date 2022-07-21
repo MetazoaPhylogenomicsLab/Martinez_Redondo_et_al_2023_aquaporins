@@ -7,7 +7,7 @@
 <sup>2</sup> Current institution: Biocomputing Unit, National Centre of Biotechnology (CNB-CSIC), Campus de Cantoblanco, 28049 Madrid, Spain.
 ***
 
- ![picture](img/picture.png)
+ ![portada](img/portada_aquaporins.png)
 
 ***
 

@@ -13,4 +13,4 @@
 module load cesga/2018
 module load gcccore/6.4.0 trimal/1.4.1
 
-trimal -keepheader -in aqps.aln -gappyout -out aqps_arth_trimmed_gappyout.aln
+trimal -keepheader -in all_aqp1.aln -gappyout -out all_aqp1_trimmed_gappyout.aln
