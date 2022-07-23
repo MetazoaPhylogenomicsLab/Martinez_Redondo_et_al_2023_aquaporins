@@ -8,13 +8,6 @@
 
 <sup>3</sup>  Current institution: Centre d’Ecologie Fonctionnelle et Evolutive (CEFE-CNRS), 1919 Route de Mende, 34293 Montpellier 5, France.
 ***
-**Citation**: 
-***
-
- ![portada](img/portada_aquaporins.svg)
-
-***
-
 ## Content of this Github
 
 Files:
@@ -30,3 +23,8 @@ Folders:
 - **Poisson**: Input files for the Poisson analysis (aquaporins counts per species and subtype and ultrametric tree). Poisson results. Script to perform the analysis.
 - **Trimming_tests**: Arthropod and Aqp1-like sequences trimming tests. Scripts, alignments and final IQ-TREE phylogenetic trees.
 - **img**: image for Readme.md.
+
+***
+**Citation**: 
+
+ ![portada](img/portada_aquaporins.svg)
