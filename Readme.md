@@ -8,6 +8,8 @@
 
 <sup>3</sup>  Current institution: Centre d’Ecologie Fonctionnelle et Evolutive (CEFE-CNRS), 1919 Route de Mende, 34293 Montpellier 5, France.
 ***
+**Citation**: 
+***
 
  ![portada](img/portada_aquaporins.svg)
 
