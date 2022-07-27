@@ -25,6 +25,6 @@ Folders:
 - **img**: image for Readme.md.
 
 ***
-**Citation**: Martinez-Redondo GI, Simón Guerrero C, Aristide L, Balart-Garcia P, Tonzo V, Fernández R. 2022. Parallel duplication and loss of aquaporin-coding genes during the 'out of the sea' transition paved the way for animal terrestrialization. bioRxiv; doi: https://doi.org/10.1101/2022.07.25.501387 
+**Citation**: Martínez-Redondo GI, Simón Guerrero C, Aristide L, Balart-Garcia P, Tonzo V, Fernández R. 2022. Parallel duplication and loss of aquaporin-coding genes during the 'out of the sea' transition paved the way for animal terrestrialization. bioRxiv; doi: https://doi.org/10.1101/2022.07.25.501387 
 
  ![portada](img/portada_aquaporins.svg)
