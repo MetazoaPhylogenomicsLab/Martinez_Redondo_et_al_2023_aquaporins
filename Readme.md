@@ -8,8 +8,6 @@
 
 <sup>3</sup>  Current institution: Centre d’Ecologie Fonctionnelle et Evolutive (CEFE-CNRS), 1919 Route de Mende, 34293 Montpellier 5, France.
 ***
-Preprint: https://www.biorxiv.org/content/10.1101/2022.07.25.501387v1
-***
 ## Content of this Github
 
 Files:
